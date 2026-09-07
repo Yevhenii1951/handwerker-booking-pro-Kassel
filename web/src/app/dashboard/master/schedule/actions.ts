@@ -5,16 +5,6 @@ import { requireRole } from "@/lib/auth"
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 
-export const WEEKDAY_LABELS = [
-  "Sonntag",
-  "Montag",
-  "Dienstag",
-  "Mittwoch",
-  "Donnerstag",
-  "Freitag",
-  "Samstag",
-] as const
-
 const workingHourSchema = z.object({
   dayOfWeek: z.coerce
     .number()

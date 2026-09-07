@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { upsertWorkingHour, deleteWorkingHour, WEEKDAY_LABELS } from "./actions"
+import { upsertWorkingHour, deleteWorkingHour } from "./actions"
+import { WEEKDAY_LABELS } from "@/lib/weekdays"
 import type { WorkingHours } from "@/types/database"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

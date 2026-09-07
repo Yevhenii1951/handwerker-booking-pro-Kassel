@@ -3,20 +3,25 @@ import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import { TRADES } from "@/lib/trades"
 import { TRADE_IMAGES, HERO_POSTER, HERO_VIDEO } from "@/lib/media"
+import { filterWithinRegion } from "@/lib/master-filter"
 import { SearchBar } from "./components/search-bar"
 
 async function getActiveMasters() {
   const supabase = await createClient()
   const { data } = await supabase
     .from("profiles")
-    .select("id, full_name, trade, city, plz")
+    .select("id, full_name, trade, city, plz, latitude, longitude")
     .eq("role", "master")
     .eq("master_status", "active")
     .not("trade", "is", null)
     .order("created_at", { ascending: false })
-    .limit(3)
+    .limit(10)
 
-  return data ?? []
+  const { data: centers } = await supabase
+    .from("region_centers")
+    .select("name, latitude, longitude, max_radius_km")
+
+  return filterWithinRegion(data ?? [], centers ?? []).slice(0, 3)
 }
 
 export default async function Home() {

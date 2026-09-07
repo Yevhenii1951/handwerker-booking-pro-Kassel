@@ -1,13 +1,14 @@
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import { TRADES } from "@/lib/trades"
+import { filterWithinRegion } from "@/lib/master-filter"
 import { MasterList } from "./components/master-list"
 
 async function getMasters(gewerk: string | null) {
   const supabase = await createClient()
   let query = supabase
     .from("profiles")
-    .select("id, full_name, trade, city, plz, bio")
+    .select("id, full_name, trade, city, plz, bio, latitude, longitude")
     .eq("role", "master")
     .eq("master_status", "active")
     .not("trade", "is", null)
@@ -17,8 +18,12 @@ async function getMasters(gewerk: string | null) {
     query = query.eq("trade", gewerk)
   }
 
-  const { data } = await query
-  return data ?? []
+  const [{ data }, { data: centers }] = await Promise.all([
+    query,
+    supabase.from("region_centers").select("name, latitude, longitude, max_radius_km"),
+  ])
+
+  return filterWithinRegion(data ?? [], centers ?? [])
 }
 
 export default async function Handwerker({

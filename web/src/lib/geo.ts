@@ -42,7 +42,7 @@ export function regionFromCenters(
       haversineDistanceKm(lat, lon, center.latitude, center.longitude) <=
       center.max_radius_km
     ) {
-      return center.name ?? null
+      return center.name ?? "in-region"
     }
   }
 

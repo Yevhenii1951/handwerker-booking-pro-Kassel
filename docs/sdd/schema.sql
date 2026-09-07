@@ -165,6 +165,18 @@ as $$
   );
 $$;
 
+-- Role of the calling user. Referenced at the TOP LEVEL of the policy
+-- expression because Postgres cannot resolve new/old inside subqueries.
+create or replace function public.my_role()
+returns text
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select role from public.profiles where id = auth.uid();
+$$;
+
 -- Anyone (incl. anon for public browsing) can read active masters and own profile.
 create policy "profiles_select" on public.profiles
   for select using (
@@ -184,8 +196,7 @@ create policy "profiles_update_own" on public.profiles
   )
   with check (
     id = auth.uid()
-    and
-    new.role = (select p.role from public.profiles p where p.id = auth.uid())
+    and role = public.my_role()
   );
 
 -- Admin updates any profile (approve/reject/deactivate masters).

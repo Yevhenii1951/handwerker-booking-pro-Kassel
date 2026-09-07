@@ -94,12 +94,9 @@ export default async function Home() {
                         />
                       </div>
                     )}
-                    <span className="flex flex-1 items-center justify-between gap-3 px-5 py-4">
+                    <span className="px-5 py-4">
                       <span className="font-semibold leading-snug text-foreground">
                         {trade}
-                      </span>
-                      <span className="shrink-0 text-xs font-bold text-accent">
-                        Termin buchen
                       </span>
                     </span>
                   </Link>

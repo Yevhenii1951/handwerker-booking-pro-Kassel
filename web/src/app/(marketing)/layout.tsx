@@ -1,6 +1,7 @@
 import { Suspense } from "react"
 import { createClient } from "@/lib/supabase/server"
-import { MarketingChrome } from "./components/marketing-chrome"
+import { MarketingHeader } from "./components/marketing-header"
+import { MarketingFooter } from "./components/marketing-footer"
 
 export default async function MarketingLayout({
   children,
@@ -15,9 +16,12 @@ export default async function MarketingLayout({
   return (
     <div className="flex min-h-screen flex-col">
       <Suspense fallback={<div className="h-14 border-b border-border" />}>
-        <MarketingChrome isLoggedIn={Boolean(user)} />
+        <MarketingHeader isLoggedIn={Boolean(user)} />
       </Suspense>
       <main className="flex-1">{children}</main>
+      <Suspense fallback={null}>
+        <MarketingFooter />
+      </Suspense>
     </div>
   )
 }

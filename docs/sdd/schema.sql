@@ -269,6 +269,19 @@ create policy "region_centers_select" on public.region_centers
   for select using (true);
 
 -- ============================================================
+-- PUBLIC CONFIRMED SLOTS (view for public availability display)
+-- Guests need to see which slots are taken, but must not see
+-- booking details (who booked). The view exposes only the busy
+-- interval and is readable by anon/authenticated.
+-- ============================================================
+create or replace view public.public_confirmed_slots as
+  select master_id, start_at, end_at
+  from public.bookings
+  where status = 'confirmed';
+
+grant select on public.public_confirmed_slots to anon, authenticated;
+
+-- ============================================================
 -- AUTO-PROFILE TRIGGER
 -- Creates a profiles row whenever a new auth user signs up.
 -- role and full_name are read from the JWT user_metadata.

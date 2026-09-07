@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
-export function LoginForm() {
+export function LoginForm({ next }: { next?: string }) {
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -30,7 +30,7 @@ export function LoginForm() {
       return
     }
 
-    router.push("/dashboard")
+    router.push(next ?? "/dashboard")
     router.refresh()
   }
 

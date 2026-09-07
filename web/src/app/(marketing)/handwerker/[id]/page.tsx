@@ -1,8 +1,9 @@
 import Image from "next/image"
-import Link from "next/link"
 import { notFound } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { tradeImage } from "@/lib/media"
+import { BookingForm } from "./booking/booking-form"
+import type { Service } from "@/types/database"
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat("de-DE", {
@@ -165,16 +166,15 @@ export default async function MasterPage(
 
         <aside className="self-start rounded-2xl bg-[#1c1c1c] p-6 text-[#eef0f2] lg:sticky lg:top-8">
           <h2 className="font-bold text-[#fafaff]">Termin anfragen</h2>
-          <p className="mt-2 text-sm text-[#dadde8]">
-            Wählen Sie eine Leistung und einen freien Slot, dann bestätigt der Betrieb Ihre
-            Anfrage.
-          </p>
-          <Link
-            href="/register"
-            className="mt-5 flex h-12 items-center justify-center rounded-lg bg-accent font-bold text-accent-foreground transition-colors hover:bg-accent/90"
-          >
-            Jetzt anfragen
-          </Link>
+          {services.length === 0 ? (
+            <p className="mt-3 text-sm text-[#dadde8]">
+              Dieser Betrieb hat noch keine Leistungen eingetragen.
+            </p>
+          ) : (
+            <div className="mt-4">
+              <BookingForm services={services as Service[]} />
+            </div>
+          )}
         </aside>
       </div>
     </div>

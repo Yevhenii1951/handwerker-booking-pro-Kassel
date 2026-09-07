@@ -6,6 +6,16 @@ export async function updateSession(request: NextRequest) {
     request,
   })
 
+  const lang = request.nextUrl.searchParams.get("lang")
+  if (lang === "en" || lang === "de") {
+    supabaseResponse.cookies.set("lang", lang, {
+      path: "/",
+      httpOnly: false,
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 365,
+    })
+  }
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,

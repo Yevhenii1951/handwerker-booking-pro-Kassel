@@ -2,6 +2,8 @@ import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import { TRADES } from "@/lib/trades"
 import { filterWithinRegion } from "@/lib/master-filter"
+import { dict, isLang } from "@/lib/i18n"
+import { getLang } from "@/lib/i18n-server"
 import { MasterList } from "./components/master-list"
 
 async function getMasters(gewerk: string | null) {
@@ -29,10 +31,12 @@ async function getMasters(gewerk: string | null) {
 export default async function Handwerker({
   searchParams,
 }: {
-  searchParams: Promise<{ gewerk?: string }>
+  searchParams: Promise<{ gewerk?: string; lang?: string }>
 }) {
-  const { gewerk } = await searchParams
+  const { gewerk, lang: langParam } = await searchParams
   const activeGewerk = gewerk && TRADES.includes(gewerk as never) ? gewerk : null
+  const lang = isLang(langParam) ? langParam : await getLang()
+  const t = dict[lang].catalog
   const masters = await getMasters(activeGewerk)
 
   return (
@@ -40,12 +44,10 @@ export default async function Handwerker({
       <section className="bg-[#ecebe4]">
         <div className="mx-auto w-full max-w-6xl px-4 py-16">
           <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Handwerker in Ihrer Nähe
+            {t.title}
           </h1>
           <p className="mt-3 max-w-xl text-muted-foreground">
-            {activeGewerk
-              ? `Betriebe mit dem Gewerk "${activeGewerk}" in Kassel, Göttingen und 50 km Umkreis.`
-              : "Alle aktiven Betriebe in Kassel, Göttingen und 50 km Umkreis."}
+            {activeGewerk ? t.inGewerk(activeGewerk) : t.all}
           </p>
 
           <div className="mt-8 flex flex-wrap gap-2">
@@ -57,7 +59,7 @@ export default async function Handwerker({
                   : "bg-[#fafaff] text-foreground shadow-[0_1px_3px_rgba(28,28,28,0.08)] hover:bg-white"
               }`}
             >
-              Alle
+              {t.alle}
             </Link>
             {TRADES.slice(0, 12).map((trade) => (
               <Link
@@ -79,7 +81,7 @@ export default async function Handwerker({
       <section className="bg-background">
         <div className="mx-auto w-full max-w-6xl px-4 py-16">
           <p className="text-sm text-muted-foreground">
-            {masters.length} {masters.length === 1 ? "Betrieb" : "Betriebe"} gefunden
+            {t.count(masters.length)}
           </p>
           <MasterList masters={masters} activeGewerk={activeGewerk} />
         </div>

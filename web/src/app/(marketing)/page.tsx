@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server"
 import { TRADES } from "@/lib/trades"
 import { TRADE_IMAGES, HERO_POSTER, HERO_VIDEO } from "@/lib/media"
 import { filterWithinRegion } from "@/lib/master-filter"
+import { dict, isLang } from "@/lib/i18n"
+import { getLang } from "@/lib/i18n-server"
 import { SearchBar } from "./components/search-bar"
 
 async function getActiveMasters() {
@@ -24,7 +26,15 @@ async function getActiveMasters() {
   return filterWithinRegion(data ?? [], centers ?? []).slice(0, 3)
 }
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ lang?: string }>
+}) {
+  const params = await searchParams
+  const lang = isLang(params.lang) ? params.lang : await getLang()
+  const t = dict[lang].landing
+
   const masters = await getActiveMasters()
 
   return (
@@ -45,17 +55,16 @@ export default async function Home() {
         <div className="relative mx-auto w-full max-w-6xl px-4 py-24 sm:py-32">
           <p className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-[#dadde8]">
             <span className="h-2.5 w-2.5 rounded-full bg-accent" aria-hidden="true" />
-            Kassel und Göttingen, 50 km Umkreis
+            {t.badge}
           </p>
           <h1 className="max-w-3xl text-4xl font-extrabold tracking-tight sm:text-6xl sm:leading-[1.05]">
-            Der richtige Handwerker. Sofort buchbar.
+            {t.title}
           </h1>
           <p className="mt-6 max-w-xl text-lg text-[#dadde8]">
-            Geprüfte Betriebe mit Preisen, Arbeitszeiten und freien Terminen — statt acht
-            Nummern abzutelefonieren.
+            {t.subtitle}
           </p>
           <div className="mt-12">
-            <SearchBar />
+            <SearchBar lang={lang} />
           </div>
         </div>
       </section>
@@ -65,18 +74,17 @@ export default async function Home() {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                Was brauchen Sie?
+                {t.catsTitle}
               </h2>
               <p className="mt-2 max-w-lg text-muted-foreground">
-                Wählen Sie ein Gewerk und sehen Sie sofort passende Betriebe aus Ihrer
-                Region.
+                {t.catsSubtitle}
               </p>
             </div>
             <Link
               href="/handwerker"
               className="w-fit text-sm font-semibold text-foreground hover:text-accent"
             >
-              Alle Gewerke
+              {t.allTrades}
             </Link>
           </div>
           <ul className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
@@ -116,33 +124,32 @@ export default async function Home() {
         <div className="mx-auto w-full max-w-6xl px-4 py-20">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              Buchung ohne Warteschleife
+              {t.stepsTitle}
             </h2>
             <p className="mt-3 text-muted-foreground">
-              Vom Suchen bis zur Terminbestätigung in drei Schritten.
+              {t.stepsSubtitle}
             </p>
           </div>
           <ol className="mt-12 grid gap-6 sm:grid-cols-3">
             <li className="rounded-2xl border border-border bg-card p-8">
               <span className="text-3xl font-extrabold tracking-tight text-accent">01</span>
-              <h3 className="mt-4 text-lg font-bold text-foreground">Betrieb finden</h3>
+              <h3 className="mt-4 text-lg font-bold text-foreground">{t.step1Title}</h3>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                Nach Gewerk und Ort filtern, Preise vergleichen und das Profil mit
-                Arbeitszeiten ansehen.
+                {t.step1Text}
               </p>
             </li>
             <li className="rounded-2xl border border-border bg-card p-8">
               <span className="text-3xl font-extrabold tracking-tight text-accent">02</span>
-              <h3 className="mt-4 text-lg font-bold text-foreground">Termin wählen</h3>
+              <h3 className="mt-4 text-lg font-bold text-foreground">{t.step2Title}</h3>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                Freie Slots sind online sichtbar, eine Leistung pro Wunsch festgelegt.
+                {t.step2Text}
               </p>
             </li>
             <li className="rounded-2xl border border-border bg-card p-8">
               <span className="text-3xl font-extrabold tracking-tight text-accent">03</span>
-              <h3 className="mt-4 text-lg font-bold text-foreground">Buchung bestätigt</h3>
+              <h3 className="mt-4 text-lg font-bold text-foreground">{t.step3Title}</h3>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                Der Betrieb bestätigt die Anfrage. Kein Warteschleifen, kein Telefon.
+                {t.step3Text}
               </p>
             </li>
           </ol>
@@ -154,16 +161,16 @@ export default async function Home() {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                Neueste Betriebe
+                {t.recentTitle}
               </h2>
               <p className="mt-2 max-w-lg text-muted-foreground">
-                Frisch registrierte Handwerksbetriebe aus Ihrer Region.
+                {t.recentSubtitle}
               </p>
             </div>
           </div>
           {masters.length === 0 ? (
             <p className="mt-10 rounded-2xl border border-dashed border-border bg-card p-8 text-center text-sm text-muted-foreground">
-              Noch keine Betriebe registriert.
+              {t.empty}
             </p>
           ) : (
             <ul className="mt-10 grid gap-4 sm:grid-cols-3">
@@ -210,18 +217,17 @@ export default async function Home() {
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-20 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Sie sind ein Handwerksbetrieb?
+              {t.ctaTitle}
             </h2>
             <p className="mt-3 max-w-lg text-[#dadde8]">
-              Öffnen Sie Ihr Profil, legen Sie Leistungen fest und lassen Sie Kunden online
-              Termine bei Ihnen buchen.
+              {t.ctaText}
             </p>
           </div>
           <Link
             href="/register"
             className="inline-flex h-12 shrink-0 items-center rounded-lg bg-accent px-8 text-base font-bold text-accent-foreground transition-colors hover:bg-accent/90"
           >
-            Jetzt registrieren
+            {t.ctaButton}
           </Link>
         </div>
       </section>

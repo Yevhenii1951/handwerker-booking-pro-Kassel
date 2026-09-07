@@ -1,17 +1,21 @@
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
+import { getLang } from "@/lib/i18n-server"
+import { dict } from "@/lib/i18n"
 import { Button } from "@/components/ui/button"
+import { LangToggle } from "./components/lang-toggle"
 
-async function AuthLinks() {
+async function AuthLinks({ lang }: { lang: "de" | "en" }) {
   const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
+  const t = dict[lang]
 
   if (user) {
     return (
       <Button asChild size="sm" variant="outline">
-        <Link href="/dashboard">Mein Bereich</Link>
+        <Link href="/dashboard">{t.layout.myArea}</Link>
       </Button>
     )
   }
@@ -19,10 +23,10 @@ async function AuthLinks() {
   return (
     <div className="flex items-center gap-2">
       <Button asChild size="sm" variant="ghost">
-        <Link href="/login">Anmelden</Link>
+        <Link href="/login">{t.layout.login}</Link>
       </Button>
       <Button asChild size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90">
-        <Link href="/register">Als Handwerker registrieren</Link>
+        <Link href="/register">{t.layout.register}</Link>
       </Button>
     </div>
   )
@@ -36,18 +40,22 @@ function Logo() {
   )
 }
 
-export default function MarketingLayout({
+export default async function MarketingLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const lang = await getLang()
+  const t = dict[lang]
+
   return (
     <div className="flex min-h-screen flex-col">
       <header className="border-b border-border bg-background">
         <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-4">
           <Logo />
           <nav className="flex items-center gap-4 text-sm text-muted-foreground">
-            <AuthLinks />
+            <LangToggle lang={lang} />
+            <AuthLinks lang={lang} />
           </nav>
         </div>
       </header>
@@ -58,16 +66,14 @@ export default function MarketingLayout({
             <p className="text-base font-extrabold tracking-tight text-[#fafaff]">
               handwerker<span className="text-accent">pro</span>
             </p>
-            <p className="mt-1 text-sm">
-              Handwerker vermitteln in Kassel & Göttingen, 50 km Umkreis.
-            </p>
+            <p className="mt-1 text-sm">{t.layout.footerTagline}</p>
           </div>
           <nav className="flex items-center gap-6 text-sm">
             <Link href="/legal/impressum" className="hover:text-[#fafaff]">
-              Impressum
+              {t.layout.impressum}
             </Link>
             <Link href="/legal/datenschutz" className="hover:text-[#fafaff]">
-              Datenschutz
+              {t.layout.datenschutz}
             </Link>
           </nav>
         </div>

@@ -3,10 +3,12 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { TRADES } from "@/lib/trades"
+import { dict, type Lang } from "@/lib/i18n"
 
-export function SearchBar() {
+export function SearchBar({ lang }: { lang: Lang }) {
   const router = useRouter()
   const [trade, setTrade] = useState("")
+  const t = dict[lang].search
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -21,7 +23,7 @@ export function SearchBar() {
       className="flex w-full max-w-2xl flex-col gap-px bg-[#dadde8] p-px sm:flex-row"
     >
       <label className="sr-only" htmlFor="gewerk">
-        Gewerk auswählen
+        {t.label}
       </label>
       <select
         id="gewerk"
@@ -29,7 +31,7 @@ export function SearchBar() {
         onChange={(e) => setTrade(e.target.value)}
         className="h-12 flex-1 bg-[#fafaff] px-4 text-base text-[#1c1c1c] outline-none"
       >
-        <option value="">Alle Gewerke</option>
+        <option value="">{t.placeholder}</option>
         {TRADES.map((t) => (
           <option key={t} value={t}>
             {t}
@@ -40,7 +42,7 @@ export function SearchBar() {
         type="submit"
         className="h-12 bg-accent px-7 text-base font-bold text-accent-foreground transition-colors hover:bg-accent/90"
       >
-        Handwerker finden
+        {t.submit}
       </button>
     </form>
   )

@@ -175,7 +175,7 @@ export default async function Home({
           ) : (
             <ul className="mt-10 grid gap-4 sm:grid-cols-3">
               {masters.map((m) => {
-                const image = tradeCover(m.trade)
+                const image = tradeCover(m.trade, m.id)
                 return (
                   <li key={m.id}>
                     <Link

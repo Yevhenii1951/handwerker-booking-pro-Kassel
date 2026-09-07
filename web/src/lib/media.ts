@@ -82,8 +82,20 @@ export function tradeGallery(trade: string | null): string[] {
   return TRADE_GALLERY[trade] ?? []
 }
 
-export function tradeCover(trade: string | null): string | null {
-  return tradeGallery(trade)[0] ?? tradeImage(trade)
+function hashSeed(value: string): number {
+  let hash = 0
+  for (let i = 0; i < value.length; i++) {
+    hash = (hash * 31 + value.charCodeAt(i)) >>> 0
+  }
+  return hash
+}
+
+export function tradeCover(trade: string | null, seed = ""): string | null {
+  const gallery = tradeGallery(trade)
+  if (gallery.length > 1 && seed) {
+    return gallery[hashSeed(seed) % gallery.length]
+  }
+  return gallery[0] ?? tradeImage(trade)
 }
 
 export function tradeImage(trade: string | null): string | null {

@@ -40,7 +40,7 @@ export function MasterList({
   return (
     <ul className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
       {masters.map((m) => {
-        const image = tradeCover(m.trade)
+        const image = tradeCover(m.trade, m.id)
         return (
           <li key={m.id}>
             <Link

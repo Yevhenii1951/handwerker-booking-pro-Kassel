@@ -70,9 +70,9 @@ export default async function MasterPage(
     .sort((a, b) => WEEKDAYS.indexOf(a.day) - WEEKDAYS.indexOf(b.day))
 
   return (
-    <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-12">
+    <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-10">
       {bannerImage && (
-        <div className="relative mb-8 aspect-[21/9] w-full overflow-hidden">
+        <div className="relative mb-10 aspect-[21/9] w-full overflow-hidden rounded-2xl">
           <Image
             src={bannerImage}
             alt={trade ?? ""}
@@ -81,92 +81,97 @@ export default async function MasterPage(
             sizes="(max-width: 1152px) 100vw, 1152px"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-[#1c1c1c]/15" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1c1c1c]/50 to-transparent" />
         </div>
       )}
-      <header className="flex flex-col gap-6 border-b border-border pb-8 sm:flex-row sm:items-start sm:justify-between">
+      <header className="flex flex-col gap-6 pb-10 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-sm font-semibold tracking-wide text-accent uppercase">
-            {trade ?? "Handwerksbetrieb"}
-          </p>
-          <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-foreground">
+          <p className="text-sm font-bold text-accent">{trade ?? "Handwerksbetrieb"}</p>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             {profile.full_name ?? "Handwerksbetrieb"}
           </h1>
           <p className="mt-2 text-muted-foreground">
             {profile.plz} {profile.city}
           </p>
           {profile.bio && (
-            <p className="mt-3 max-w-xl text-foreground/80">{profile.bio}</p>
+            <p className="mt-4 max-w-xl leading-6 text-foreground/80">{profile.bio}</p>
           )}
         </div>
         {profile.phone && (
           <a
             href={`tel:${profile.phone}`}
-            className="shrink-0 border border-border px-4 py-2 text-sm font-semibold text-foreground hover:bg-muted"
+            className="shrink-0 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
           >
             {profile.phone}
           </a>
         )}
       </header>
 
-      <div className="mt-8 grid gap-10 lg:grid-cols-[1fr,340px]">
-        <section>
-          <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-            Leistungen & Preise
-          </h2>
-          {services.length === 0 ? (
-            <p className="mt-4 border border-dashed border-border p-6 text-sm text-muted-foreground">
-              Dieses Gewerk hat noch keine Leistungen eingetragen.
-            </p>
-          ) : (
-            <ul className="mt-4 divide-y divide-border border-y border-border">
-              {services.map((s) => (
-                <li
-                  key={s.id}
-                  className="flex items-center justify-between gap-4 py-4"
-                >
-                  <span className="font-medium text-foreground">{s.name}</span>
-                  <span className="shrink-0 text-sm text-muted-foreground">
-                    {s.duration_minutes} Min. · {formatPrice(s.price)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
+      <div className="grid gap-8 lg:grid-cols-[1fr,340px]">
+        <section className="space-y-8">
+          <div className="rounded-2xl bg-[#ecebe4] p-6 sm:p-8">
+            <h2 className="text-xl font-bold tracking-tight text-foreground">
+              Leistungen & Preise
+            </h2>
+            {services.length === 0 ? (
+              <p className="mt-4 rounded-xl border border-dashed border-border bg-card p-6 text-sm text-muted-foreground">
+                Dieses Gewerk hat noch keine Leistungen eingetragen.
+              </p>
+            ) : (
+              <ul className="mt-5 space-y-3">
+                {services.map((s) => (
+                  <li
+                    key={s.id}
+                    className="flex items-center justify-between gap-4 rounded-xl bg-card px-5 py-4 shadow-[0_1px_3px_rgba(28,28,28,0.08)]"
+                  >
+                    <span className="font-semibold text-foreground">{s.name}</span>
+                    <span className="shrink-0 text-sm text-muted-foreground">
+                      {s.duration_minutes} Min. ·{" "}
+                      <span className="font-semibold text-foreground">
+                        {formatPrice(s.price)}
+                      </span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
 
-          <h2 className="mt-10 text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-            Öffnungszeiten
-          </h2>
-          {hourRows.length === 0 ? (
-            <p className="mt-4 border border-dashed border-border p-6 text-sm text-muted-foreground">
-              Noch keine Arbeitszeiten eingetragen.
-            </p>
-          ) : (
-            <dl className="mt-4 divide-y divide-border border-y border-border">
-              {hourRows.map((row) => (
-                <div
-                  key={row.day}
-                  className="flex items-center justify-between py-2 text-sm"
-                >
-                  <dt className="text-muted-foreground">{row.day}</dt>
-                  <dd className="font-medium text-foreground tabular-nums">
-                    {row.time} Uhr
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          )}
+          <div className="rounded-2xl bg-[#ecebe4] p-6 sm:p-8">
+            <h2 className="text-xl font-bold tracking-tight text-foreground">
+              Öffnungszeiten
+            </h2>
+            {hourRows.length === 0 ? (
+              <p className="mt-4 rounded-xl border border-dashed border-border bg-card p-6 text-sm text-muted-foreground">
+                Noch keine Arbeitszeiten eingetragen.
+              </p>
+            ) : (
+              <dl className="mt-5 space-y-2">
+                {hourRows.map((row) => (
+                  <div
+                    key={row.day}
+                    className="flex items-center justify-between rounded-lg bg-card px-4 py-3 text-sm shadow-[0_1px_3px_rgba(28,28,28,0.08)]"
+                  >
+                    <dt className="text-muted-foreground">{row.day}</dt>
+                    <dd className="font-semibold text-foreground tabular-nums">
+                      {row.time} Uhr
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+          </div>
         </section>
 
-        <aside className="self-start border border-border bg-card p-6 lg:sticky lg:top-8">
-          <h2 className="font-bold text-foreground">Termin anfragen</h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Wählen Sie eine Leistung und einen freien Slot, dann bestätigt der
-            Betrieb Ihre Anfrage.
+        <aside className="self-start rounded-2xl bg-[#1c1c1c] p-6 text-[#eef0f2] lg:sticky lg:top-8">
+          <h2 className="font-bold text-[#fafaff]">Termin anfragen</h2>
+          <p className="mt-2 text-sm text-[#dadde8]">
+            Wählen Sie eine Leistung und einen freien Slot, dann bestätigt der Betrieb Ihre
+            Anfrage.
           </p>
           <Link
             href="/register"
-            className="mt-4 flex h-11 items-center justify-center bg-accent uppercase font-semibold text-accent-foreground hover:bg-accent/90"
+            className="mt-5 flex h-12 items-center justify-center rounded-lg bg-accent font-bold text-accent-foreground transition-colors hover:bg-accent/90"
           >
             Jetzt anfragen
           </Link>

@@ -1,7 +1,7 @@
 import Image from "next/image"
 import { notFound } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
-import { tradeImage } from "@/lib/media"
+import { tradeImage, tradeGallery } from "@/lib/media"
 import { BookingForm } from "./booking/booking-form"
 import type { Service } from "@/types/database"
 
@@ -63,6 +63,7 @@ export default async function MasterPage(
   const { profile, services, workingHours } = master
   const trade = profile.trade ?? null
   const bannerImage = tradeImage(trade)
+  const galleryImages = tradeGallery(trade)
   const hourRows = workingHours
     .map((h) => ({
       day: WEEKDAYS[h.day_of_week],
@@ -137,6 +138,32 @@ export default async function MasterPage(
               </ul>
             )}
           </div>
+
+          {galleryImages.length > 0 && (
+            <div className="rounded-2xl bg-[#ecebe4] p-6 sm:p-8">
+              <h2 className="text-xl font-bold tracking-tight text-foreground">
+                Galerie
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Beispiele aus der Praxis.
+              </p>
+              <ul className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {galleryImages.map((src) => (
+                  <li key={src} className="overflow-hidden rounded-xl">
+                    <div className="relative aspect-[4/3]">
+                      <Image
+                        src={src}
+                        alt={trade ?? "Arbeitsbeispiel"}
+                        fill
+                        sizes="(max-width: 640px) 50vw, 33vw"
+                        className="object-cover transition-transform duration-500 hover:scale-105"
+                      />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           <div className="rounded-2xl bg-[#ecebe4] p-6 sm:p-8">
             <h2 className="text-xl font-bold tracking-tight text-foreground">

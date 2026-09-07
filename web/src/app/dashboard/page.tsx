@@ -8,5 +8,8 @@ export default async function DashboardRouter() {
   if (profile.role === "master") {
     redirect("/dashboard/master")
   }
+  if (profile.role === "admin") {
+    redirect("/dashboard/admin")
+  }
   redirect("/dashboard/customer")
 }

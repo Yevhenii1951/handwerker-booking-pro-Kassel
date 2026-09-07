@@ -151,22 +151,50 @@ alter table public.bookings enable row level security;
 alter table public.region_centers enable row level security;
 
 -- ---------- PROFILES ----------
+-- Helper: is the current user an admin? (security definer reads profiles)
+create or replace function public.is_admin()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1 from public.profiles p
+    where p.id = auth.uid() and p.role = 'admin'
+  );
+$$;
+
 -- Anyone (incl. anon for public browsing) can read active masters and own profile.
 create policy "profiles_select" on public.profiles
   for select using (
     id = auth.uid()
     or role = 'master' and master_status = 'active'
-    or role = 'admin'
+    or public.is_admin()
   );
 
 -- User inserts own profile row.
 create policy "profiles_insert_own" on public.profiles
   for insert with check (id = auth.uid());
 
--- User updates own profile; admin updates any.
+-- User updates own profile row (cannot change own role: guarded in WITH CHECK).
 create policy "profiles_update_own" on public.profiles
   for update using (
-    id = auth.uid() or role = 'admin'
+    id = auth.uid()
+  )
+  with check (
+    id = auth.uid()
+    and
+    new.role = (select p.role from public.profiles p where p.id = auth.uid())
+  );
+
+-- Admin updates any profile (approve/reject/deactivate masters).
+create policy "profiles_update_admin" on public.profiles
+  for update using (
+    public.is_admin()
+  )
+  with check (
+    public.is_admin()
   );
 
 -- ---------- PORTFOLIO IMAGES ----------

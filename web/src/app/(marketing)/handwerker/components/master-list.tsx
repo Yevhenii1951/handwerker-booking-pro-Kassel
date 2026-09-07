@@ -1,6 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
-import { tradeImage } from "@/lib/media"
+import { tradeCover } from "@/lib/media"
 
 interface Master {
   id: string
@@ -40,7 +40,7 @@ export function MasterList({
   return (
     <ul className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
       {masters.map((m) => {
-        const image = tradeImage(m.trade)
+        const image = tradeCover(m.trade)
         return (
           <li key={m.id}>
             <Link

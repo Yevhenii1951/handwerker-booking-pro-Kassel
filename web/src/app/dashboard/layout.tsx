@@ -11,6 +11,7 @@ const NAV: Record<string, { href: string; label: string }[]> = {
     { href: "/dashboard/master/bookings", label: "Buchungen" },
     { href: "/dashboard/master/services", label: "Leistungen" },
     { href: "/dashboard/master/schedule", label: "Arbeitszeiten" },
+    { href: "/dashboard/master/portfolio", label: "Portfolio" },
     { href: "/dashboard/master/profile", label: "Profil" },
   ],
   admin: [

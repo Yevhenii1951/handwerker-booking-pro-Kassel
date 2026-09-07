@@ -1,7 +1,7 @@
 import Image from "next/image"
 import { notFound } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
-import { tradeImage, tradeGallery } from "@/lib/media"
+import { tradeImage } from "@/lib/media"
 import { BookingForm } from "./booking/booking-form"
 import type { Service } from "@/types/database"
 
@@ -35,18 +35,30 @@ async function getMaster(id: string) {
 
   if (!profile) return null
 
-  const [{ data: services }, { data: workingHours }] = await Promise.all([
-    supabase
-      .from("services")
-      .select("id, name, price, duration_minutes")
-      .eq("master_id", id),
-    supabase
-      .from("working_hours")
-      .select("day_of_week, start_time, end_time")
-      .eq("master_id", id),
-  ])
+  const [{ data: services }, { data: workingHours }, { data: portfolio }] =
+    await Promise.all([
+      supabase
+        .from("services")
+        .select("id, name, price, duration_minutes")
+        .eq("master_id", id),
+      supabase
+        .from("working_hours")
+        .select("day_of_week, start_time, end_time")
+        .eq("master_id", id),
+      supabase
+        .from("portfolio_images")
+        .select("image_url")
+        .eq("master_id", id)
+        .order("sort_order", { ascending: true })
+        .order("created_at", { ascending: true }),
+    ])
 
-  return { profile, services: services ?? [], workingHours: workingHours ?? [] }
+  return {
+    profile,
+    services: services ?? [],
+    workingHours: workingHours ?? [],
+    portfolio: portfolio ?? [],
+  }
 }
 
 export default async function MasterPage(
@@ -60,10 +72,9 @@ export default async function MasterPage(
   const master = await getMaster(id)
   if (!master) notFound()
 
-  const { profile, services, workingHours } = master
+  const { profile, services, workingHours, portfolio } = master
   const trade = profile.trade ?? null
   const bannerImage = tradeImage(trade)
-  const galleryImages = tradeGallery(trade)
   const hourRows = workingHours
     .map((h) => ({
       day: WEEKDAYS[h.day_of_week],
@@ -139,7 +150,7 @@ export default async function MasterPage(
             )}
           </div>
 
-          {galleryImages.length > 0 && (
+          {portfolio.length > 0 && (
             <div className="rounded-2xl bg-[#ecebe4] p-6 sm:p-8">
               <h2 className="text-xl font-bold tracking-tight text-foreground">
                 Galerie
@@ -148,11 +159,14 @@ export default async function MasterPage(
                 Beispiele aus der Praxis.
               </p>
               <ul className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {galleryImages.map((src) => (
-                  <li key={src} className="overflow-hidden rounded-xl">
+                {portfolio.map((img, i) => (
+                  <li
+                    key={`${img.image_url}-${i}`}
+                    className="overflow-hidden rounded-xl"
+                  >
                     <div className="relative aspect-[4/3]">
                       <Image
-                        src={src}
+                        src={img.image_url}
                         alt={trade ?? "Arbeitsbeispiel"}
                         fill
                         sizes="(max-width: 640px) 50vw, 33vw"

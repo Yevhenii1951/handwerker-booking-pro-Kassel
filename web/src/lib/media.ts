@@ -82,6 +82,10 @@ export function tradeGallery(trade: string | null): string[] {
   return TRADE_GALLERY[trade] ?? []
 }
 
+export function tradeCover(trade: string | null): string | null {
+  return tradeGallery(trade)[0] ?? tradeImage(trade)
+}
+
 export function tradeImage(trade: string | null): string | null {
   if (!trade) return null
   return TRADE_IMAGES[trade] ?? null

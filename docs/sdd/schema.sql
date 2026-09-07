@@ -51,6 +51,12 @@ create table public.portfolio_images (
 
 create index idx_portfolio_master on public.portfolio_images (master_id);
 
+-- Storage bucket for portfolio photos (public). Set up by
+-- docs/sdd/views/portfolio-storage.sql (policies live on storage.objects).
+insert into storage.buckets (id, name, public)
+values ('portfolio-images', 'portfolio-images', true)
+on conflict (id) do nothing;
+
 -- ============================================================
 -- SERVICES (offered by a master)
 -- ============================================================
@@ -214,17 +220,17 @@ create policy "portfolio_select" on public.portfolio_images
 
 create policy "portfolio_insert_own" on public.portfolio_images
   for insert with check (
-    master_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role = 'admin')
+    master_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role::text = 'admin')
   );
 
 create policy "portfolio_update_own" on public.portfolio_images
   for update using (
-    master_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role = 'admin')
+    master_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role::text = 'admin')
   );
 
 create policy "portfolio_delete_own" on public.portfolio_images
   for delete using (
-    master_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role = 'admin')
+    master_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role::text = 'admin')
   );
 
 -- ---------- SERVICES ----------
@@ -233,22 +239,22 @@ create policy "services_select" on public.services
   for select using (
     exists (select 1 from public.profiles m
             where m.id = services.master_id
-              and (m.role = 'master' and m.master_status = 'active'))
+              and (m.role::text = 'master' and m.master_status = 'active'))
   );
 
 create policy "services_insert_own" on public.services
   for insert with check (
-    master_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role = 'admin')
+    master_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role::text = 'admin')
   );
 
 create policy "services_update_own" on public.services
   for update using (
-    master_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role = 'admin')
+    master_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role::text = 'admin')
   );
 
 create policy "services_delete_own" on public.services
   for delete using (
-    master_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role = 'admin')
+    master_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role::text = 'admin')
   );
 
 -- ---------- WORKING HOURS ----------
@@ -257,17 +263,17 @@ create policy "working_hours_select" on public.working_hours
 
 create policy "working_hours_insert_own" on public.working_hours
   for insert with check (
-    master_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role = 'admin')
+    master_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role::text = 'admin')
   );
 
 create policy "working_hours_update_own" on public.working_hours
   for update using (
-    master_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role = 'admin')
+    master_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role::text = 'admin')
   );
 
 create policy "working_hours_delete_own" on public.working_hours
   for delete using (
-    master_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role = 'admin')
+    master_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role::text = 'admin')
   );
 
 -- ---------- BLOCKED TIMES ----------
@@ -276,12 +282,12 @@ create policy "blocked_times_select" on public.blocked_times
 
 create policy "blocked_times_insert_own" on public.blocked_times
   for insert with check (
-    master_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role = 'admin')
+    master_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role::text = 'admin')
   );
 
 create policy "blocked_times_delete_own" on public.blocked_times
   for delete using (
-    master_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role = 'admin')
+    master_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role::text = 'admin')
   );
 
 -- ---------- BOOKINGS ----------
@@ -290,7 +296,7 @@ create policy "bookings_select" on public.bookings
   for select using (
     customer_id = auth.uid()
     or master_id = auth.uid()
-    or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role = 'admin')
+    or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role::text = 'admin')
   );
 
 -- Customer creates a booking for themselves.
@@ -300,7 +306,7 @@ create policy "bookings_insert" on public.bookings
 -- Master updates booking status (confirm/decline); customer cancels their own.
 create policy "bookings_update" on public.bookings
   for update using (
-    master_id = auth.uid() or customer_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role = 'admin')
+    master_id = auth.uid() or customer_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role::text = 'admin')
   );
 
 -- ---------- REGION CENTERS ----------

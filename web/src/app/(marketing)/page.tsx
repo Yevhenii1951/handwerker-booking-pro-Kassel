@@ -2,7 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import { TRADES } from "@/lib/trades"
-import { TRADE_IMAGES, HERO_POSTER, HERO_VIDEO } from "@/lib/media"
+import { TRADE_IMAGES, tradeCover, HERO_POSTER, HERO_VIDEO } from "@/lib/media"
 import { filterWithinRegion } from "@/lib/master-filter"
 import { dict, isLang } from "@/lib/i18n"
 import { getLang } from "@/lib/i18n-server"
@@ -175,7 +175,7 @@ export default async function Home({
           ) : (
             <ul className="mt-10 grid gap-4 sm:grid-cols-3">
               {masters.map((m) => {
-                const image = TRADE_IMAGES[m.trade ?? ""]
+                const image = tradeCover(m.trade)
                 return (
                   <li key={m.id}>
                     <Link

@@ -18,7 +18,7 @@ export function SearchBar() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex w-full max-w-2xl flex-col gap-2 border border-border bg-background p-2 sm:flex-row"
+      className="flex w-full max-w-2xl flex-col gap-px bg-[#dadde8] p-px sm:flex-row"
     >
       <label className="sr-only" htmlFor="gewerk">
         Gewerk auswählen
@@ -27,7 +27,7 @@ export function SearchBar() {
         id="gewerk"
         value={trade}
         onChange={(e) => setTrade(e.target.value)}
-        className="h-11 flex-1 bg-transparent px-3 text-foreground outline-none"
+        className="h-12 flex-1 bg-[#fafaff] px-4 text-base text-[#1c1c1c] outline-none"
       >
         <option value="">Alle Gewerke</option>
         {TRADES.map((t) => (
@@ -38,7 +38,7 @@ export function SearchBar() {
       </select>
       <button
         type="submit"
-        className="h-11 bg-accent px-6 font-semibold text-accent-foreground hover:bg-accent/90"
+        className="h-12 bg-accent px-7 text-base font-bold text-accent-foreground transition-colors hover:bg-accent/90"
       >
         Handwerker finden
       </button>

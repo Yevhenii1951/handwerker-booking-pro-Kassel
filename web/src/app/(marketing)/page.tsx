@@ -22,37 +22,51 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col">
-      <section className="border-b border-border">
+      <section className="bg-[#1c1c1c] text-[#eef0f2]">
         <div className="mx-auto w-full max-w-6xl px-4 py-20 sm:py-28">
-          <p className="mb-4 text-sm font-semibold tracking-wide text-muted-foreground">
-            Kassel · Göttingen · 50 km Umkreis
+          <p className="mb-5 inline-flex items-center gap-2 text-sm font-medium text-[#dadde8]">
+            <span className="h-2.5 w-2.5 bg-accent" aria-hidden="true" />
+            Kassel und Göttingen, 50 km Umkreis
           </p>
-          <h1 className="max-w-2xl text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
-            Geprüfte Handwerker. Termin online buchen.
+          <h1 className="max-w-3xl text-4xl font-extrabold tracking-tight sm:text-6xl sm:leading-[1.05]">
+            Der richtige Handwerker. Sofort buchbar.
           </h1>
-          <p className="mt-4 max-w-xl text-lg text-muted-foreground">
-            Echte Meisterbetriebe aus Ihrer Region — mit Preisen, Arbeitszeiten
-            und freien Terminen auf einen Blick.
+          <p className="mt-6 max-w-xl text-lg text-[#dadde8]">
+            Geprüfte Betriebe mit Preisen, Arbeitszeiten und freien Terminen —
+            statt acht Nummern abzutelefonieren.
           </p>
-          <div className="mt-8">
+          <div className="mt-10">
             <SearchBar />
           </div>
         </div>
       </section>
 
-      <section className="border-b border-border">
-        <div className="mx-auto w-full max-w-6xl px-4 py-12">
-          <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-            Gewerke
-          </h2>
-          <ul className="mt-4 grid grid-cols-2 gap-px bg-border sm:grid-cols-3 lg:grid-cols-4">
+      <section className="bg-[#ecebe4]">
+        <div className="mx-auto w-full max-w-6xl px-4 py-16">
+          <div className="flex items-baseline justify-between">
+            <h2 className="text-xs font-bold uppercase tracking-[0.14em] text-[#6b6d68]">
+              Beliebte Gewerke
+            </h2>
+            <Link
+              href="/handwerker"
+              className="border-b border-[#6b6d68] pb-0.5 text-sm font-semibold text-foreground hover:border-foreground"
+            >
+              Alle ansehen
+            </Link>
+          </div>
+          <ul className="mt-8 grid grid-cols-2 gap-px bg-[#dadde8] sm:grid-cols-4">
             {TRADES.slice(0, 8).map((trade) => (
-              <li key={trade} className="bg-background">
+              <li key={trade} className="bg-[#ecebe4]">
                 <Link
                   href={`/handwerker?gewerk=${encodeURIComponent(trade)}`}
-                  className="flex h-full items-center justify-between px-4 py-3 text-sm font-medium hover:bg-muted"
+                  className="flex h-full flex-col justify-between gap-8 px-5 py-6 hover:bg-[#eef0f2]"
                 >
-                  {trade}
+                  <span className="text-sm font-semibold leading-snug text-foreground">
+                    {trade}
+                  </span>
+                  <span className="text-xs font-semibold text-accent">
+                    Termin buchen
+                  </span>
                 </Link>
               </li>
             ))}
@@ -60,101 +74,100 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="border-b border-border">
-        <div className="mx-auto w-full max-w-6xl px-4 py-12">
-          <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+      <section className="border-t border-[#dadde8] bg-background">
+        <div className="mx-auto w-full max-w-6xl px-4 py-16">
+          <h2 className="text-xs font-bold uppercase tracking-[0.14em] text-[#6b6d68]">
             So funktioniert es
           </h2>
-          <ol className="mt-4 grid gap-px border border-border bg-border sm:grid-cols-3">
-            <li className="flex flex-col bg-background p-6">
-              <span className="text-sm font-semibold text-accent">01</span>
-              <h3 className="mt-2 font-bold text-foreground">
-                Passenden Handwerker finden
+          <ol className="mt-8 grid gap-x-12 gap-y-10 sm:grid-cols-3">
+            <li className="border-t-2 border-foreground pt-5">
+              <span className="text-2xl font-extrabold text-accent">01</span>
+              <h3 className="mt-2 text-lg font-bold text-foreground">
+                Betrieb finden
               </h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Nach Gewerk und Region filtern und Profile mit Preisen
-                vergleichen.
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                Nach Gewerk und Ort filtern, Preise vergleichen, Profil mit
+                Arbeitszeiten ansehen.
               </p>
             </li>
-            <li className="flex flex-col bg-background p-6">
-              <span className="text-sm font-semibold text-accent">02</span>
-              <h3 className="mt-2 font-bold text-foreground">
-                Freien Termin wählen
+            <li className="border-t-2 border-foreground pt-5">
+              <span className="text-2xl font-extrabold text-accent">02</span>
+              <h3 className="mt-2 text-lg font-bold text-foreground">
+                Termin wählen
               </h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Arbeitszeiten der Betriebe und ihre freien Slots direkt
-                einsehen.
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                Freie Slots sind online sichtbar, eine Leistung pro Wunsch
+                festgelegt.
               </p>
             </li>
-            <li className="flex flex-col bg-background p-6">
-              <span className="text-sm font-semibold text-accent">03</span>
-              <h3 className="mt-2 font-bold text-foreground">
-                Online buchen
+            <li className="border-t-2 border-foreground pt-5">
+              <span className="text-2xl font-extrabold text-accent">03</span>
+              <h3 className="mt-2 text-lg font-bold text-foreground">
+                Buchung bestätigt
               </h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Anfrage senden — der Betrieb bestätigt. Kein Telefonieren, kein
-                Warten.
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                Der Betrieb bestätigt die Anfrage. Kein Warteschleifen, kein
+                Telefon.
               </p>
             </li>
           </ol>
         </div>
       </section>
 
-      <section className="border-b border-border">
-        <div className="mx-auto w-full max-w-6xl px-4 py-12">
+      <section className="border-t border-[#dadde8] bg-[#ecebe4]">
+        <div className="mx-auto w-full max-w-6xl px-4 py-16">
           <div className="flex items-baseline justify-between">
-            <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-              Neue Betriebe
+            <h2 className="text-xs font-bold uppercase tracking-[0.14em] text-[#6b6d68]">
+              Neueste Betriebe
             </h2>
-            <Link
-              href="/handwerker"
-              className="text-sm font-semibold text-primary hover:underline"
-            >
-              Alle ansehen
-            </Link>
           </div>
-          <ul className="mt-4 divide-y divide-border border-y border-border">
-            {masters.length === 0 && (
-              <li className="py-8 text-sm text-muted-foreground">
-                Noch keine Betriebe registriert.
-              </li>
-            )}
-            {masters.map((m) => (
-              <li key={m.id}>
-                <Link
-                  href={`/handwerker/${m.id}`}
-                  className="flex flex-col gap-1 py-4 hover:bg-muted sm:flex-row sm:items-center sm:justify-between"
-                >
-                  <span className="font-semibold text-foreground">
-                    {m.full_name ?? "Handwerksbetrieb"}
-                  </span>
-                  <span className="flex gap-3 text-sm text-muted-foreground">
-                    <span>{m.trade}</span>
-                    <span>
-                      {m.plz} {m.city}
+          {masters.length === 0 ? (
+            <p className="mt-8 text-sm text-muted-foreground">
+              Noch keine Betriebe registriert.
+            </p>
+          ) : (
+            <ul className="mt-8 divide-y divide-[#b6b8b1]">
+              {masters.map((m) => (
+                <li key={m.id}>
+                  <Link
+                    href={`/handwerker/${m.id}`}
+                    className="group flex flex-col gap-1 py-5 sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <span className="font-bold text-foreground group-hover:text-accent">
+                      {m.full_name ?? "Handwerksbetrieb"}
                     </span>
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
+                    <span className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                      <span className="font-medium text-foreground/70">
+                        {m.trade}
+                      </span>
+                      <span>
+                        {m.plz} {m.city}
+                      </span>
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </section>
 
-      <section>
-        <div className="mx-auto w-full max-w-6xl px-4 py-16 text-center">
-          <h2 className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
-            Sie sind Handwerksbetrieb?
-          </h2>
-          <p className="mx-auto mt-2 max-w-lg text-muted-foreground">
-            Melden Sie sich kostenlos an, legen Sie Ihre Leistungen fest und
-            lassen Sie Kunden online Termine bei Ihnen buchen.
-          </p>
+      <section className="bg-[#1c1c1c] text-[#eef0f2]">
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-20 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+              Sie sind ein Handwerksbetrieb?
+            </h2>
+            <p className="mt-3 max-w-lg text-[#dadde8]">
+              Öffnen Sie Ihr Profil, legen Sie Leistungen fest und lassen Sie
+              Kunden online Termine bei Ihnen buchen.
+            </p>
+          </div>
           <Link
             href="/register"
-            className="mt-6 inline-flex h-11 items-center bg-primary px-6 font-semibold text-primary-foreground hover:bg-primary/80"
+            className="inline-flex h-12 shrink-0 items-center bg-accent px-8 text-base font-bold text-accent-foreground transition-colors hover:bg-accent/90"
           >
-            Betrieb registrieren
+            Jetzt registrieren
           </Link>
         </div>
       </section>

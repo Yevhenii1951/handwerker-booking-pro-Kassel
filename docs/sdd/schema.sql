@@ -284,7 +284,10 @@ begin
     new.id,
     coalesce((new.raw_user_meta_data->>'role'), 'customer')::public.app_role,
     new.raw_user_meta_data->>'full_name',
-    case when (new.raw_user_meta_data->>'role') = 'master' then 'pending' else null end
+    case
+      when (new.raw_user_meta_data->>'role') = 'master' then 'pending'::public.master_status
+      else null::public.master_status
+    end
   );
   return new;
 end;

@@ -59,7 +59,7 @@ export const dict = {
     langName: "English",
     layout: {
       login: "Log in",
-      register: "Register",
+      register: "Registrieren",
       myArea: "My account",
       footerTagline: "Local tradespeople in Kassel & Göttingen, 50 km radius.",
       impressum: "Imprint",

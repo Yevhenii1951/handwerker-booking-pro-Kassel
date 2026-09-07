@@ -1,6 +1,8 @@
+import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
+import { tradeImage } from "@/lib/media"
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat("de-DE", {
@@ -59,6 +61,7 @@ export default async function MasterPage(
 
   const { profile, services, workingHours } = master
   const trade = profile.trade ?? null
+  const bannerImage = tradeImage(trade)
   const hourRows = workingHours
     .map((h) => ({
       day: WEEKDAYS[h.day_of_week],
@@ -68,6 +71,19 @@ export default async function MasterPage(
 
   return (
     <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-12">
+      {bannerImage && (
+        <div className="relative mb-8 aspect-[21/9] w-full overflow-hidden">
+          <Image
+            src={bannerImage}
+            alt={trade ?? ""}
+            fill
+            priority
+            sizes="(max-width: 1152px) 100vw, 1152px"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-[#1c1c1c]/15" />
+        </div>
+      )}
       <header className="flex flex-col gap-6 border-b border-border pb-8 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-sm font-semibold tracking-wide text-accent uppercase">

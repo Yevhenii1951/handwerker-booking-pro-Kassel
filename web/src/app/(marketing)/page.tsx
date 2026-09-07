@@ -1,6 +1,8 @@
+import Image from "next/image"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import { TRADES } from "@/lib/trades"
+import { TRADE_IMAGES, HERO_POSTER, HERO_VIDEO } from "@/lib/media"
 import { SearchBar } from "./components/search-bar"
 
 async function getActiveMasters() {
@@ -22,8 +24,20 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col">
-      <section className="bg-[#1c1c1c] text-[#eef0f2]">
-        <div className="mx-auto w-full max-w-6xl px-4 py-20 sm:py-28">
+      <section className="relative overflow-hidden bg-[#1c1c1c] text-[#eef0f2]">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster={HERO_POSTER}
+          className="absolute inset-0 h-full w-full object-cover opacity-40"
+          aria-hidden="true"
+        >
+          <source src={HERO_VIDEO} type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#1c1c1c]/70 via-[#1c1c1c]/40 to-[#1c1c1c]" />
+        <div className="relative mx-auto w-full max-w-6xl px-4 py-20 sm:py-28">
           <p className="mb-5 inline-flex items-center gap-2 text-sm font-medium text-[#dadde8]">
             <span className="h-2.5 w-2.5 bg-accent" aria-hidden="true" />
             Kassel und Göttingen, 50 km Umkreis
@@ -55,21 +69,38 @@ export default async function Home() {
             </Link>
           </div>
           <ul className="mt-8 grid grid-cols-2 gap-px bg-[#dadde8] sm:grid-cols-4">
-            {TRADES.slice(0, 8).map((trade) => (
-              <li key={trade} className="bg-[#ecebe4]">
-                <Link
-                  href={`/handwerker?gewerk=${encodeURIComponent(trade)}`}
-                  className="flex h-full flex-col justify-between gap-8 px-5 py-6 hover:bg-[#eef0f2]"
-                >
-                  <span className="text-sm font-semibold leading-snug text-foreground">
-                    {trade}
-                  </span>
-                  <span className="text-xs font-semibold text-accent">
-                    Termin buchen
-                  </span>
-                </Link>
-              </li>
-            ))}
+            {TRADES.slice(0, 8).map((trade) => {
+              const image = TRADE_IMAGES[trade]
+              return (
+                <li key={trade} className="bg-[#ecebe4]">
+                  <Link
+                    href={`/handwerker?gewerk=${encodeURIComponent(trade)}`}
+                    className="group flex h-full flex-col justify-between"
+                  >
+                    {image && (
+                      <div className="relative aspect-[16/10] overflow-hidden">
+                        <Image
+                          src={image}
+                          alt={trade}
+                          fill
+                          sizes="(max-width: 640px) 50vw, 25vw"
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-[#1c1c1c]/10" />
+                      </div>
+                    )}
+                    <span className="flex flex-1 items-end justify-between gap-4 px-5 py-4">
+                      <span className="text-sm font-semibold leading-snug text-foreground">
+                        {trade}
+                      </span>
+                      <span className="text-xs font-semibold text-accent">
+                        Termin buchen
+                      </span>
+                    </span>
+                  </Link>
+                </li>
+              )
+            })}
           </ul>
         </div>
       </section>

@@ -161,7 +161,7 @@ set search_path = public
 as $$
   select exists (
     select 1 from public.profiles p
-    where p.id = auth.uid() and p.role = 'admin'
+where p.id = auth.uid() and p.role::text = 'admin'
   );
 $$;
 
@@ -174,14 +174,14 @@ stable
 security definer
 set search_path = public
 as $$
-  select role from public.profiles where id = auth.uid();
+  select role::text from public.profiles where id = auth.uid();
 $$;
 
 -- Anyone (incl. anon for public browsing) can read active masters and own profile.
 create policy "profiles_select" on public.profiles
   for select using (
     id = auth.uid()
-    or role = 'master' and master_status = 'active'
+    or role::text = 'master' and master_status = 'active'
     or public.is_admin()
   );
 
@@ -196,7 +196,7 @@ create policy "profiles_update_own" on public.profiles
   )
   with check (
     id = auth.uid()
-    and role = public.my_role()
+    and role::text = public.my_role()
   );
 
 -- Admin updates any profile (approve/reject/deactivate masters).

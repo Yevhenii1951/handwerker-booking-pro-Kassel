@@ -27,11 +27,24 @@ export function isWithinAnyRegion(
   lon: number | null,
   centers: { latitude: number; longitude: number; max_radius_km: number }[]
 ): boolean {
-  if (lat === null || lon === null) return false
+  return regionFromCenters(lat, lon, centers) !== null
+}
 
-  return centers.some(
-    (center) =>
+export function regionFromCenters(
+  lat: number | null,
+  lon: number | null,
+  centers: { name?: string; latitude: number; longitude: number; max_radius_km: number }[]
+): string | null {
+  if (lat === null || lon === null) return null
+
+  for (const center of centers) {
+    if (
       haversineDistanceKm(lat, lon, center.latitude, center.longitude) <=
       center.max_radius_km
-  )
+    ) {
+      return center.name ?? null
+    }
+  }
+
+  return null
 }

@@ -95,7 +95,7 @@ export default async function Home() {
                       </div>
                     )}
                     <span className="px-5 py-4">
-                      <span className="font-semibold leading-snug text-[#008574]">
+                      <span className="font-semibold leading-snug text-[1.3rem] text-[#008574]">
                         {trade}
                       </span>
                     </span>

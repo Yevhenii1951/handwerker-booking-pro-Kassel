@@ -1,13 +1,8 @@
 import { requireRole } from "@/lib/auth"
-import { redirect } from "next/navigation"
 import Link from "next/link"
 
 export default async function MasterDashboard() {
   const { profile } = await requireRole(["master", "admin"])
-
-  if (!profile.trade || profile.latitude === null || profile.longitude === null) {
-    redirect("/dashboard/master/onboarding")
-  }
 
   const status = profile.master_status
 
@@ -37,12 +32,18 @@ export default async function MasterDashboard() {
         </div>
       )}
 
-      <div>
+      <div className="flex flex-wrap gap-3">
         <Link
-          href="/dashboard/master/onboarding"
-          className="text-sm font-medium text-primary hover:underline"
+          href="/dashboard/master/services"
+          className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/80"
         >
-          Profil bearbeiten
+          Leistungen verwalten
+        </Link>
+        <Link
+          href="/dashboard/master/schedule"
+          className="rounded-lg border bg-background px-4 py-2 text-sm font-medium hover:bg-muted"
+        >
+          Arbeitszeiten festlegen
         </Link>
       </div>
     </div>

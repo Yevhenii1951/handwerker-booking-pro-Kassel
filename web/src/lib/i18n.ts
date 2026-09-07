@@ -7,7 +7,7 @@ export const dict = {
     langName: "Deutsch",
     layout: {
       login: "Anmelden",
-      register: "Als Handwerker registrieren",
+      register: "Registrieren",
       myArea: "Mein Bereich",
       footerTagline: "Handwerker vermitteln in Kassel & Göttingen, 50 km Umkreis.",
       impressum: "Impressum",

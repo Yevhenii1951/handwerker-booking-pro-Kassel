@@ -72,7 +72,10 @@ export function RegisterForm() {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: metadata },
+      options: {
+        data: metadata,
+        emailRedirectTo: `${window.location.origin}/api/auth/callback`,
+      },
     })
 
     if (error) {

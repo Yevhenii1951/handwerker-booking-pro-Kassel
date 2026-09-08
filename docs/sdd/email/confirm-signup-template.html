@@ -1,0 +1,41 @@
+<h2>Bestätigen Sie Ihre E-Mail-Adresse</h2>
+
+<p>Guten Tag,</p>
+
+<p>
+  Sie haben sich soeben bei <strong>handwerkerpro</strong> registriert. Um Ihr Konto
+  zu aktivieren und alle Funktionen (Buchungen, Dashboard) nutzen zu können,
+  bestätigen Sie bitte Ihre E-Mail-Adresse über den folgenden Link:
+</p>
+
+<p style="margin: 24px 0">
+  <a
+    href="{{ .ConfirmationURL }}"
+    style="
+      background-color: #b84a26;
+      color: #ffffff;
+      padding: 12px 24px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      display: inline-block;
+    "
+  >
+    E-Mail bestätigen
+  </a>
+</p>
+
+<p>
+  Falls der Button nicht funktioniert, kopieren Sie diesen Link in Ihren Browser:
+</p>
+
+<p><a href="{{ .ConfirmationURL }}">{{ .ConfirmationURL }}</a></p>
+
+<p>
+  Wenn Sie sich nicht registriert haben, können Sie diese E-Mail ignorieren.
+</p>
+
+<p>
+  Mit freundlichen Grüßen<br />
+  Ihr handwerkerpro-Team
+</p>

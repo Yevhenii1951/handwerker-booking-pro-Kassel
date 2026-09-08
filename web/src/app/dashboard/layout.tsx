@@ -1,6 +1,7 @@
 import { requireProfile } from "@/lib/auth"
 import { LogoutButton } from "./logout-button"
 import { DashboardNav, type DashboardNavItem } from "./nav"
+import { NotificationBell } from "./notification-bell"
 import Link from "next/link"
 
 const NAV: Record<string, DashboardNavItem[]> = {
@@ -51,7 +52,10 @@ export default async function DashboardLayout({
               </span>
             )}
           </div>
-          <LogoutButton />
+          <div className="flex items-center gap-2">
+            <NotificationBell />
+            <LogoutButton />
+          </div>
         </div>
         {nav.length > 0 && <DashboardNav items={nav} />}
       </header>

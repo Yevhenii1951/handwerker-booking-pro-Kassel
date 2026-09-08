@@ -208,6 +208,13 @@ export async function createBooking(input: {
     return { ok: false, error: "Buchung fehlgeschlagen. Bitte erneut versuchen." }
   }
 
+  await supabase.rpc("create_notification", {
+    p_user_id: masterId,
+    p_title: "Neue Terminanfrage",
+    p_body: `Eine neue Buchungsanfrage für diesen Termin liegt vor.`,
+    p_link: "/dashboard/master/bookings",
+  })
+
   revalidatePath(`/handwerker/${masterId}`)
   revalidatePath("/dashboard/customer")
   revalidatePath("/dashboard/master")

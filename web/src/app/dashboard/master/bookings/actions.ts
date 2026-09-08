@@ -24,7 +24,7 @@ export async function setBookingStatus(
 
   const { data: booking } = await supabase
     .from("bookings")
-    .select("id, master_id, start_at, status")
+    .select("id, master_id, customer_id, start_at, status")
     .eq("id", bookingId)
     .eq("master_id", profile.id)
     .maybeSingle()
@@ -59,6 +59,22 @@ export async function setBookingStatus(
 
   if (error) {
     return { ok: false, error: "Aktualisieren fehlgeschlagen. Bitte erneut versuchen." }
+  }
+
+  if (parsed.data === "confirmed") {
+    await supabase.rpc("create_notification", {
+      p_user_id: booking.customer_id,
+      p_title: "Termin bestätigt",
+      p_body: "Ihre Terminanfrage wurde bestätigt.",
+      p_link: "/dashboard/customer",
+    })
+  } else {
+    await supabase.rpc("create_notification", {
+      p_user_id: booking.customer_id,
+      p_title: "Termin abgelehnt",
+      p_body: "Ihre Terminanfrage wurde leider abgelehnt.",
+      p_link: "/dashboard/customer",
+    })
   }
 
   revalidatePath("/dashboard/master/bookings")

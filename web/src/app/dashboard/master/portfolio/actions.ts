@@ -38,7 +38,10 @@ export async function uploadPortfolioPhoto(
     .from("portfolio-images")
     .upload(path, file, { contentType: file.type, upsert: false })
   if (uploadError) {
-    return { ok: false, error: "Upload fehlgeschlagen. Bitte erneut versuchen." }
+    return {
+      ok: false,
+      error: `Upload fehlgeschlagen: ${uploadError.message} (${uploadError.statusCode ?? ""})`,
+    }
   }
 
   const publicUrl = supabase.storage

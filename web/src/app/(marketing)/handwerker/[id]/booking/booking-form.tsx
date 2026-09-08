@@ -3,11 +3,8 @@
 import { useEffect, useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { createBooking, getAvailableSlots, type SlotDay } from "./actions"
+import { BookingCalendar } from "./booking-calendar"
 import type { Service } from "@/types/database"
-
-function slotTime(startAt: string): string {
-  return startAt.slice(11, 16)
-}
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat("de-DE", {
@@ -119,7 +116,7 @@ export function BookingForm({ services }: { services: Service[] }) {
 
       <div className="mt-5">
         <p className="mb-2 text-sm font-medium text-[#dadde8]">
-          Freie Termine (nächste 14 Tage)
+          Freie Termine · Kalender
         </p>
 
         {loadingSlots && (
@@ -132,42 +129,25 @@ export function BookingForm({ services }: { services: Service[] }) {
             {slotState.error}
           </p>
         )}
-        {!loadingSlots && !slotState.error && slotState.days && slotState.days.length === 0 && (
-          <p className="rounded-lg bg-white/5 px-3 py-3 text-sm text-[#dadde8]">
-            In den nächsten 14 Tagen sind keine freien Termine verfügbar.
-          </p>
-        )}
+        {!loadingSlots &&
+          !slotState.error &&
+          slotState.days &&
+          slotState.days.length === 0 && (
+            <p className="rounded-lg bg-white/5 px-3 py-3 text-sm text-[#dadde8]">
+              In den nächsten 14 Tagen sind keine freien Termine verfügbar.
+            </p>
+          )}
 
-        {!loadingSlots && !slotState.error && slotState.days && slotState.days.length > 0 && (
-          <div className="max-h-64 space-y-4 overflow-y-auto pr-1">
-            {slotState.days.map((day) => (
-              <div key={day.date}>
-                <p className="mb-1.5 text-xs font-semibold uppercase text-[#dadde8]">
-                  {day.dayLabel}
-                </p>
-                <div className="grid grid-cols-2 gap-2">
-                  {day.slots.map((slot) => {
-                    const active = selectedSlot === slot.startAt
-                    return (
-                      <button
-                        key={slot.startAt}
-                        type="button"
-                        onClick={() => setSelectedSlot(slot.startAt)}
-                        className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                          active
-                            ? "bg-accent text-white"
-                            : "border border-white/10 bg-white/5 text-[#fafaff] hover:bg-white/10"
-                        }`}
-                      >
-                        {slotTime(slot.startAt)} Uhr
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        {!loadingSlots &&
+          !slotState.error &&
+          slotState.days &&
+          slotState.days.length > 0 && (
+            <BookingCalendar
+              days={slotState.days}
+              value={selectedSlot}
+              onChange={setSelectedSlot}
+            />
+          )}
       </div>
 
       <div className="mt-5">

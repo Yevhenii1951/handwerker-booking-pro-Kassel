@@ -21,6 +21,36 @@ export async function setBookingStatus(
   }
 
   const supabase = await createClient()
+
+  const { data: booking } = await supabase
+    .from("bookings")
+    .select("id, master_id, start_at, status")
+    .eq("id", bookingId)
+    .eq("master_id", profile.id)
+    .maybeSingle()
+
+  if (!booking) {
+    return { ok: false, error: "Buchung nicht gefunden." }
+  }
+
+  if (parsed.data === "confirmed") {
+    const { data: conflict } = await supabase
+      .from("bookings")
+      .select("id")
+      .eq("master_id", profile.id)
+      .eq("start_at", booking.start_at)
+      .eq("status", "confirmed")
+      .neq("id", bookingId)
+      .maybeSingle()
+
+    if (conflict) {
+      return {
+        ok: false,
+        error: "Dieser Termin ist bereits bestätigt für eine andere Buchung.",
+      }
+    }
+  }
+
   const { error } = await supabase
     .from("bookings")
     .update({ status: parsed.data, updated_at: new Date().toISOString() })

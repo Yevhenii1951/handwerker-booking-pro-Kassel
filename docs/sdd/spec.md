@@ -67,6 +67,17 @@ Impressum, Datenschutzerklärung, cookie consent. Required for German market.
 ### FR-12 — Design
 Unique, trustworthy, mobile-first UI with clear "Jetzt buchen" CTAs. Built with design skills (frontend-design) to avoid AI-generic look.
 
+### FR-13 — Email confirmation with custom SMTP (deferred)
+Custom SMTP (e.g. Brevo free tier) so Supabase confirms signups with a German template and the project's own sender address.
+
+Steps (out of scope until explicitly done):
+1. Register SMTP provider (Brevo/Resend/Mailersend free tier).
+2. Supabase → Auth → SMTP Settings: host/port/credentials, sender `noreply@ваш-домен.de`, sender name `handwerkerpro`.
+3. Configure SPF/DKIM DNS records for the sender domain (avoid spam folder).
+4. Auth → Email Templates → Confirm signup: subject `Bestätigen Sie Ihre E-Mail-Adresse – handwerkerpro`, body = `docs/sdd/email/confirm-signup-template.html`.
+5. Auth → URL Configuration → Redirect URLs: add site URL + `https://ваш-домен/api/auth/callback` so the confirmation link returns to the dashboard.
+6. Sign-up flow already passes `emailRedirectTo = /api/auth/callback` (done in code).
+
 ## Non-Functional Requirements
 
 - Responsive, mobile-first. Primary interaction often on phone.
@@ -78,7 +89,7 @@ Unique, trustworthy, mobile-first UI with clear "Jetzt buchen" CTAs. Built with 
 ## Out of Scope (MVP)
 
 - Payments (no Stripe in phase 1).
-- Notifications via Telegram/SMS (email later).
+- Notifications via Telegram/SMS (in-app email notifications in scope, external channels later).
 - Reviews/ratings (later phase).
 - Complex calendar recurring exceptions (blocked_times in v1, exceptions later).
 
@@ -88,5 +99,7 @@ Unique, trustworthy, mobile-first UI with clear "Jetzt buchen" CTAs. Built with 
 - AC-2: Two customers cannot book the same slot for the same master simultaneously.
 - AC-3: A customer cannot edit another master's profile (RLS + role check).
 - AC-4: A registration for a master outside the region is rejected or marked out-of-zone.
-- AC-5: A pending booking does not block a slot from another booking request (only confirmed booking blocks).
+- AC-5: A pending booking freezes the slot (other customers cannot book the same slot while it is pending); only `confirmed` bookings block a slot for picker purposes.
 - AC-6: Legal pages (Impressum, Datenschutz) are reachable in DE and EN.
+- AC-7: Confirming a booking fails server-side if the slot was already confirmed for another booking (double-booking guard).
+- AC-8: Master and customer receive in-app notifications on request → confirm/decline and on customer cancellation (toast/bell; read clears them).

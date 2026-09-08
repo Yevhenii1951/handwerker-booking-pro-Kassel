@@ -64,6 +64,21 @@ export default async function CustomerDashboard() {
         Hier sehen Sie den Status Ihrer Terminanfragen.
       </p>
 
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Link
+          href="/handwerker"
+          className="inline-flex h-10 items-center rounded-lg bg-accent px-5 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent/90"
+        >
+          Handwerker suchen
+        </Link>
+        <Link
+          href="/"
+          className="inline-flex h-10 items-center rounded-lg border border-border bg-card px-5 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+        >
+          Zur Startseite
+        </Link>
+      </div>
+
       {list.length === 0 ? (
         <div className="mt-6 rounded-2xl border border-dashed border-border bg-card p-10 text-center">
           <p className="text-sm text-muted-foreground">

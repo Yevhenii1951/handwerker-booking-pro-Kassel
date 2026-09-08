@@ -32,7 +32,7 @@ export function CancelBookingButton({
     return (
       <button
         onClick={() => setConfirming(true)}
-        className="rounded-lg border bg-background px-3 py-1.5 text-sm font-medium text-zinc-600 hover:bg-muted dark:text-zinc-300"
+        className="rounded-lg border border-border bg-card px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
       >
         Stornieren
       </button>
@@ -41,20 +41,20 @@ export function CancelBookingButton({
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm text-zinc-500">
+      <span className="text-sm text-muted-foreground">
         {serviceName} wirklich stornieren?
       </span>
       <button
         onClick={handleCancel}
         disabled={submitting}
-        className="rounded-lg bg-destructive px-3 py-1.5 text-sm font-medium text-white hover:bg-destructive/80 disabled:opacity-50"
+        className="rounded-lg bg-destructive px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-destructive/80 disabled:opacity-50"
       >
         {submitting ? "…" : "Ja"}
       </button>
       <button
         onClick={() => setConfirming(false)}
         disabled={submitting}
-        className="rounded-lg border bg-background px-3 py-1.5 text-sm font-medium hover:bg-muted disabled:opacity-50"
+        className="rounded-lg border border-border bg-card px-3 py-1.5 text-sm font-medium transition-colors hover:bg-muted disabled:opacity-50"
       >
         Nein
       </button>

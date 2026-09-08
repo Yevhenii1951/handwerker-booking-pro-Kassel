@@ -39,7 +39,7 @@ export function ServicesManager({ services }: ServicesManagerProps) {
   if (services.length === 0) {
     return (
       <div className="space-y-4">
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="text-sm text-muted-foreground">
           Sie haben noch keine Leistungen angelegt.
         </p>
         <CreateServiceDialog
@@ -127,7 +127,9 @@ function CreateServiceDialog({ open, onOpenChange }: CreateServiceDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button>Leistung hinzufügen</Button>
+        <Button className="bg-accent text-accent-foreground hover:bg-accent/90">
+          Leistung hinzufügen
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

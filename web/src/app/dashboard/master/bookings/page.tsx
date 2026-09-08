@@ -1,6 +1,7 @@
 import { requireRole } from "@/lib/auth"
 import { createClient } from "@/lib/supabase/server"
 import { BookingRow } from "./booking-row"
+import { requireMasterSetup } from "../setup-guard"
 
 function formatBookedAt(value: string): string {
   return new Intl.DateTimeFormat("de-DE", {
@@ -22,6 +23,7 @@ const STATUS_RANK: Record<string, number> = {
 
 export default async function MasterBookingsPage() {
   const { profile } = await requireRole(["master", "admin"])
+  requireMasterSetup(profile)
 
   const supabase = await createClient()
   const { data: bookings } = await supabase
@@ -66,19 +68,21 @@ export default async function MasterBookingsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold">Buchungsanfragen</h1>
-      <p className="mt-1 text-sm text-zinc-500">
+      <h1 className="text-2xl font-semibold tracking-tight">
+        Buchungsanfragen
+      </h1>
+      <p className="mt-1 text-sm text-muted-foreground">
         {pendingCount > 0
           ? `${pendingCount} offene ${pendingCount === 1 ? "Anfrage" : "Anfragen"}.`
           : "Keine offenen Anfragen."}
       </p>
 
       {rows.length === 0 ? (
-        <div className="mt-6 rounded-lg border border-dashed border-zinc-300 p-8 text-center text-sm text-zinc-500 dark:border-zinc-700">
+        <div className="mt-6 rounded-2xl border border-dashed border-border bg-card p-10 text-center text-sm text-muted-foreground">
           Noch keine Buchungsanfragen.
         </div>
       ) : (
-        <ul className="mt-6 rounded-xl border border-zinc-200 bg-white px-5 dark:border-zinc-800 dark:bg-zinc-900">
+        <ul className="mt-6 divide-y divide-border rounded-2xl border border-border bg-card px-5">
           {rows.map((b) => (
             <BookingRow
               key={b.id}

@@ -1,6 +1,7 @@
 import { requireRole } from "@/lib/auth"
 import { createClient } from "@/lib/supabase/server"
 import { BookingRow } from "./bookings/booking-row"
+import { requireMasterSetup } from "./setup-guard"
 import Link from "next/link"
 
 function formatBookedAt(value: string): string {
@@ -16,6 +17,7 @@ function formatBookedAt(value: string): string {
 
 export default async function MasterDashboard() {
   const { profile } = await requireRole(["master", "admin"])
+  requireMasterSetup(profile)
 
   const supabase = await createClient()
   const { data: bookings } = await supabase
@@ -26,6 +28,7 @@ export default async function MasterDashboard() {
 
   const list = bookings ?? []
   const pendingCount = list.filter((b) => b.status === "pending").length
+  const confirmedCount = list.filter((b) => b.status === "confirmed").length
 
   const serviceIds = [
     ...new Set(list.map((b) => b.service_id).filter((id): id is string => Boolean(id))),
@@ -55,79 +58,103 @@ export default async function MasterDashboard() {
       status: b.status,
     }))
 
-  return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-semibold">
-          {profile.master_status === "pending" ? "Antrag in Prüfung" : "Handwerker-Dashboard"}
-        </h1>
-        <p className="mt-1 text-sm text-zinc-500">
-          {profile.trade} · {profile.city}
-          {profile.plz ? ` (${profile.plz})` : ""}
-        </p>
-      </div>
+  const pending = profile.master_status === "pending"
+  const firstName = profile.full_name?.split(" ")[0]
+  const location = [profile.trade, profile.city]
+    .filter(Boolean)
+    .join(" · ")
 
-      {profile.master_status === "pending" ? (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200">
-          <p className="font-medium">Ihr Antrag wird geprüft.</p>
-          <p className="mt-1">
-            Sobald ein Administrator Ihren Standort freigeschaltet hat, können
-            Sie Dienste und Zeiten verwalten und Buchungen bestätigen.
-          </p>
+  return (
+    <div className="space-y-6">
+      <section className="overflow-hidden rounded-2xl bg-[#1c1c1c] text-[#eef0f2]">
+        <div className="p-6 sm:p-8">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-[#fafaff]">
+                {pending
+                  ? "Antrag in Prüfung"
+                  : firstName
+                    ? `Willkommen, ${firstName}`
+                    : "Willkommen zurück"}
+              </h1>
+              <p className="mt-1 text-sm text-[#b6b8b1]">
+                {location}
+                {profile.plz ? ` (${profile.plz})` : ""}
+              </p>
+            </div>
+            {!pending && (
+              <div className="flex flex-wrap gap-2 text-sm">
+                <span className="rounded-full bg-amber-400/15 px-3 py-1 font-medium text-amber-300">
+                  {pendingCount} offen
+                </span>
+                <span className="rounded-full bg-teal-400/15 px-3 py-1 font-medium text-teal-300">
+                  {confirmedCount} bestätigt
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {pending ? (
+        <div className="rounded-2xl border border-border bg-card p-6 text-sm leading-relaxed text-muted-foreground">
+          Sobald ein Administrator Ihren Standort freigeschaltet hat, können
+          Sie Dienste und Zeiten verwalten und Buchungen bestätigen.
         </div>
       ) : (
         <>
           {pendingCount > 0 && (
-            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200">
-              <p className="font-medium">
-                {pendingCount} offene{" "}
-                {pendingCount === 1 ? "Terminanfrage" : "Terminanfragen"} warten auf
-                Ihre Antwort.
+            <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-900">
+              <span
+                aria-hidden="true"
+                className="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-amber-500"
+              />
+              <p>
+                <span className="font-semibold">
+                  {pendingCount}{" "}
+                  {pendingCount === 1 ? "Terminanfrage wartet" : "Terminanfragen warten"}{" "}
+                </span>
+                auf Ihre Antwort.
               </p>
             </div>
           )}
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2">
             <Link
               href="/dashboard/master/bookings"
-              className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/80"
+              className="inline-flex h-10 items-center rounded-lg bg-accent px-5 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent/90"
             >
               Buchungen verwalten
             </Link>
             <Link
               href="/dashboard/master/services"
-              className="rounded-lg border bg-background px-4 py-2 text-sm font-medium hover:bg-muted"
+              className="inline-flex h-10 items-center rounded-lg border border-border bg-card px-5 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
             >
               Leistungen
             </Link>
             <Link
               href="/dashboard/master/schedule"
-              className="rounded-lg border bg-background px-4 py-2 text-sm font-medium hover:bg-muted"
+              className="inline-flex h-10 items-center rounded-lg border border-border bg-card px-5 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
             >
               Arbeitszeiten
             </Link>
           </div>
 
           <section>
-            <h2 className="text-lg font-semibold">Aktuelle Buchungen</h2>
+            <h2 className="text-lg font-semibold tracking-tight">
+              Aktuelle Buchungen
+            </h2>
             {recent.length === 0 ? (
-              <p className="mt-3 text-sm text-zinc-500">
+              <p className="mt-3 text-sm text-muted-foreground">
                 Noch keine Anfragen. Sobald Kunden einen Termin anfragen, sehen Sie
                 ihn hier.
               </p>
             ) : (
-              <ul className="mt-4 rounded-xl border border-zinc-200 bg-white px-5 dark:border-zinc-800 dark:bg-zinc-900">
+              <ul className="mt-4 divide-y divide-border rounded-2xl border border-border bg-card px-5">
                 {recent.map((b) => (
                   <BookingRow
                     key={b.id}
-                    booking={{
-                      id: b.id,
-                      startAt: b.startAt,
-                      serviceName: b.serviceName,
-                      phone: b.phone,
-                      notes: b.notes,
-                      status: b.status,
-                    }}
+                    booking={b}
                   />
                 ))}
               </ul>

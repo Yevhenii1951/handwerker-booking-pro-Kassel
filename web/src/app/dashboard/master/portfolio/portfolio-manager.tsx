@@ -94,7 +94,7 @@ export function PortfolioManager({
         type="button"
         disabled={uploading}
         onClick={() => inputRef.current?.click()}
-        className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/80 disabled:opacity-50"
+        className="inline-flex h-9 items-center rounded-lg bg-accent px-4 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {uploading ? "Wird hochgeladen…" : "Foto hinzufügen"}
       </button>

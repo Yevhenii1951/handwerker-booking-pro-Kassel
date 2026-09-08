@@ -35,9 +35,9 @@ export function LoginForm({ next }: { next?: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+    <form onSubmit={handleSubmit} className="mt-8 space-y-5">
       <div>
-        <label className="mb-1.5 block text-sm font-medium" htmlFor="email">
+        <label className="mb-2 block text-sm font-semibold" htmlFor="email">
           E-Mail
         </label>
         <Input
@@ -51,7 +51,7 @@ export function LoginForm({ next }: { next?: string }) {
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-medium" htmlFor="password">
+        <label className="mb-2 block text-sm font-semibold" htmlFor="password">
           Passwort
         </label>
         <Input
@@ -65,12 +65,16 @@ export function LoginForm({ next }: { next?: string }) {
       </div>
 
       {error && (
-        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
           {error}
         </p>
       )}
 
-      <Button type="submit" className="w-full" disabled={loading}>
+      <Button
+        type="submit"
+        className="mt-2 h-11 w-full bg-accent text-accent-foreground hover:bg-accent/90"
+        disabled={loading}
+      >
         {loading ? "Wird angemeldet…" : "Anmelden"}
       </Button>
     </form>

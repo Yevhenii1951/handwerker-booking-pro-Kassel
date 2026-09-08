@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation"
 import { updateMasterProfile, type ProfileResult } from "./actions"
 import { TRADES } from "@/lib/trades"
 import type { Profile } from "@/types/database"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
-const inputClass =
-  "h-10 w-full rounded-lg border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+const selectClass =
+  "h-9 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
 
 export function ProfileForm({ profile }: { profile: Profile }) {
   const router = useRouter()
@@ -35,25 +37,24 @@ export function ProfileForm({ profile }: { profile: Profile }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+    <form onSubmit={handleSubmit} className="mt-6 space-y-5">
       <div>
-        <label className="mb-1.5 block text-sm font-medium" htmlFor="fullName">
+        <label className="mb-2 block text-sm font-semibold" htmlFor="fullName">
           Betriebsname
         </label>
-        <input
+        <Input
           id="fullName"
           name="fullName"
           defaultValue={profile.full_name ?? ""}
           required
-          className={inputClass}
         />
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-medium" htmlFor="trade">
+        <label className="mb-2 block text-sm font-semibold" htmlFor="trade">
           Gewerk
         </label>
-        <select id="trade" name="trade" defaultValue={profile.trade ?? ""} className={inputClass}>
+        <select id="trade" name="trade" defaultValue={profile.trade ?? ""} className={selectClass}>
           {TRADES.map((t) => (
             <option key={t} value={t}>
               {t}
@@ -64,47 +65,44 @@ export function ProfileForm({ profile }: { profile: Profile }) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-sm font-medium" htmlFor="plz">
+          <label className="mb-2 block text-sm font-semibold" htmlFor="plz">
             PLZ
           </label>
-          <input
+          <Input
             id="plz"
             name="plz"
             defaultValue={profile.plz ?? ""}
             required
             pattern="\d{5}"
-            className={inputClass}
           />
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-medium" htmlFor="city">
+          <label className="mb-2 block text-sm font-semibold" htmlFor="city">
             Ort
           </label>
-          <input
+          <Input
             id="city"
             name="city"
             defaultValue={profile.city ?? ""}
             required
-            className={inputClass}
           />
         </div>
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-medium" htmlFor="phone">
+        <label className="mb-2 block text-sm font-semibold" htmlFor="phone">
           Telefon
         </label>
-        <input
+        <Input
           id="phone"
           name="phone"
           type="tel"
           defaultValue={profile.phone ?? ""}
-          className={inputClass}
         />
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-medium" htmlFor="bio">
+        <label className="mb-2 block text-sm font-semibold" htmlFor="bio">
           Beschreibung
         </label>
         <textarea
@@ -112,28 +110,28 @@ export function ProfileForm({ profile }: { profile: Profile }) {
           name="bio"
           rows={4}
           defaultValue={profile.bio ?? ""}
-          className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+          className="w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
         />
       </div>
 
       {error && (
-        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
           {error}
         </p>
       )}
       {saved && (
-        <p className="rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-700 dark:bg-emerald-950 dark:text-emerald-200">
+        <p className="rounded-lg bg-teal-100 px-3 py-2 text-sm text-teal-900 dark:bg-teal-400/15 dark:text-teal-300">
           Profil gespeichert.
         </p>
       )}
 
-      <button
+      <Button
         type="submit"
+        className="bg-accent text-accent-foreground hover:bg-accent/90"
         disabled={submitting}
-        className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/80 disabled:opacity-50"
       >
         {submitting ? "Wird gespeichert…" : "Speichern"}
-      </button>
+      </Button>
     </form>
   )
 }

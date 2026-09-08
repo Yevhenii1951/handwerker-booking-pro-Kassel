@@ -29,9 +29,9 @@ export function OnboardingForm({ profile }: OnboardingFormProps) {
   )
 
   return (
-    <form action={formAction} className="mt-6 space-y-4">
+    <form action={formAction} className="mt-6 space-y-5">
       <div>
-        <label className="mb-1.5 block text-sm font-medium" htmlFor="trade">
+        <label className="mb-2 block text-sm font-semibold" htmlFor="trade">
           Gewerk
         </label>
         <select
@@ -39,7 +39,7 @@ export function OnboardingForm({ profile }: OnboardingFormProps) {
           name="trade"
           defaultValue={profile.trade ?? ""}
           required
-          className="flex h-8 w-full rounded-lg border border-input bg-background px-3 text-sm"
+          className="flex h-9 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
         >
           <option value="" disabled>
             Bitte wählen…
@@ -54,7 +54,7 @@ export function OnboardingForm({ profile }: OnboardingFormProps) {
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="mb-1.5 block text-sm font-medium" htmlFor="plz">
+          <label className="mb-2 block text-sm font-semibold" htmlFor="plz">
             PLZ
           </label>
           <Input
@@ -68,7 +68,7 @@ export function OnboardingForm({ profile }: OnboardingFormProps) {
           />
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-medium" htmlFor="city">
+          <label className="mb-2 block text-sm font-semibold" htmlFor="city">
             Ort
           </label>
           <Input
@@ -82,7 +82,7 @@ export function OnboardingForm({ profile }: OnboardingFormProps) {
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-medium" htmlFor="phone">
+        <label className="mb-2 block text-sm font-semibold" htmlFor="phone">
           Telefon (optional)
         </label>
         <Input
@@ -95,7 +95,7 @@ export function OnboardingForm({ profile }: OnboardingFormProps) {
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-medium" htmlFor="bio">
+        <label className="mb-2 block text-sm font-semibold" htmlFor="bio">
           Über mich (optional)
         </label>
         <textarea
@@ -104,23 +104,23 @@ export function OnboardingForm({ profile }: OnboardingFormProps) {
           defaultValue={profile.bio ?? ""}
           maxLength={600}
           rows={3}
-          className="flex w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+          className="w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
           placeholder="Beschreiben Sie kurz Ihre Arbeit und Erfahrung…"
         />
       </div>
 
-      <p className="text-xs leading-snug text-zinc-500">
+      <p className="text-xs leading-snug text-muted-foreground">
         Wir prüfen im nächsten Schritt, ob Ihr Standort in unserem Servicegebiet
         liegt (max. 50 km um Kassel oder Göttingen).
       </p>
 
       {state && (
-        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
           {state}
         </p>
       )}
 
-      <Button type="submit" className="w-full" disabled={isPending}>
+      <Button type="submit" className="mt-2 h-11 w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={isPending}>
         {isPending ? "Wird geprüft…" : "Standort prüfen und speichern"}
       </Button>
     </form>

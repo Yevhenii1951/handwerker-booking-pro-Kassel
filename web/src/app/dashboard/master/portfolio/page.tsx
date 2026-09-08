@@ -1,9 +1,11 @@
-import { requireProfile } from "@/lib/auth"
+import { requireRole } from "@/lib/auth"
 import { createClient } from "@/lib/supabase/server"
 import { PortfolioManager } from "./portfolio-manager"
+import { requireMasterSetup } from "../setup-guard"
 
 export default async function PortfolioPage() {
-  const { profile } = await requireProfile()
+  const { profile } = await requireRole(["master", "admin"])
+  requireMasterSetup(profile)
 
   const supabase = await createClient()
   const { data } = await supabase
@@ -15,8 +17,8 @@ export default async function PortfolioPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold">Portfolio</h1>
-      <p className="mt-1 text-sm text-zinc-500">
+      <h1 className="text-2xl font-semibold tracking-tight">Portfolio</h1>
+      <p className="mt-1 text-sm text-muted-foreground">
         Fotos Ihrer Arbeiten werden auf Ihrer öffentlichen Betriebsseite angezeigt.
       </p>
       <PortfolioManager images={data ?? []} />

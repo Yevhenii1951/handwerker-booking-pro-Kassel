@@ -1,11 +1,10 @@
 import { requireProfile } from "@/lib/auth"
 import { LogoutButton } from "./logout-button"
+import { DashboardNav, type DashboardNavItem } from "./nav"
 import Link from "next/link"
 
-const NAV: Record<string, { href: string; label: string }[]> = {
-  customer: [
-    { href: "/dashboard/customer", label: "Meine Buchungen" },
-  ],
+const NAV: Record<string, DashboardNavItem[]> = {
+  customer: [{ href: "/dashboard/customer", label: "Meine Buchungen" }],
   master: [
     { href: "/dashboard/master", label: "Übersicht" },
     { href: "/dashboard/master/bookings", label: "Buchungen" },
@@ -14,9 +13,13 @@ const NAV: Record<string, { href: string; label: string }[]> = {
     { href: "/dashboard/master/portfolio", label: "Portfolio" },
     { href: "/dashboard/master/profile", label: "Profil" },
   ],
-  admin: [
-    { href: "/dashboard/admin", label: "Übersicht" },
-  ],
+  admin: [{ href: "/dashboard/admin", label: "Übersicht" }],
+}
+
+const ROLE_LABEL: Record<string, string> = {
+  customer: "Kunde",
+  master: "Handwerker",
+  admin: "Administrator",
 }
 
 export default async function DashboardLayout({
@@ -29,37 +32,32 @@ export default async function DashboardLayout({
   const nav = NAV[profile.role] ?? []
 
   return (
-    <div className="min-h-full flex-1">
-      <header className="border-b bg-white dark:bg-zinc-900">
-        <div className="mx-auto flex max-w-5xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/" className="font-semibold">
-              HandwerkerPro
+    <div className="flex min-h-full flex-1 flex-col">
+      <header className="border-b border-border bg-background">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <Link
+              href="/"
+              className="shrink-0 text-lg font-extrabold tracking-tight text-foreground"
+            >
+              handwerker<span className="text-accent">pro</span>
             </Link>
-            <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-              {profile.role === "master" ? "Handwerker" : "Kunde"}
+            <span className="hidden shrink-0 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-foreground sm:inline-flex">
+              {ROLE_LABEL[profile.role] ?? "Benutzer"}
             </span>
             {profile.full_name && (
-              <span className="text-sm text-zinc-500">{profile.full_name}</span>
+              <span className="hidden truncate text-sm text-muted-foreground md:inline">
+                {profile.full_name}
+              </span>
             )}
           </div>
           <LogoutButton />
         </div>
-        {nav.length > 0 && (
-          <nav className="mx-auto flex max-w-5xl gap-1 overflow-x-auto px-4 pb-3">
-            {nav.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="rounded-lg px-3 py-1.5 text-sm font-medium text-zinc-600 hover:bg-muted hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-        )}
+        {nav.length > 0 && <DashboardNav items={nav} />}
       </header>
-      <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
+      <main className="mx-auto w-full max-w-5xl flex-1 animate-in px-4 py-8 fade-in duration-500 ease-out motion-reduce:animate-none">
+        {children}
+      </main>
     </div>
   )
 }

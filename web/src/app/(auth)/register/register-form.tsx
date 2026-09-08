@@ -54,9 +54,9 @@ export function RegisterForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+    <form onSubmit={handleSubmit} className="mt-5 space-y-3.5">
       <div>
-        <label className="mb-1.5 block text-sm font-medium" htmlFor="fullName">
+        <label className="mb-1.5 block text-sm font-semibold" htmlFor="fullName">
           Name
         </label>
         <Input
@@ -69,7 +69,7 @@ export function RegisterForm() {
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-medium" htmlFor="email">
+        <label className="mb-1.5 block text-sm font-semibold" htmlFor="email">
           E-Mail
         </label>
         <Input
@@ -83,7 +83,7 @@ export function RegisterForm() {
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-medium" htmlFor="password">
+        <label className="mb-1.5 block text-sm font-semibold" htmlFor="password">
           Passwort
         </label>
         <Input
@@ -98,14 +98,14 @@ export function RegisterForm() {
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-medium" htmlFor="role">
+        <label className="mb-1.5 block text-sm font-semibold" htmlFor="role">
           Ich bin
         </label>
         <select
           id="role"
           value={role}
           onChange={(e) => setRole(e.target.value as Role)}
-          className="flex h-8 w-full rounded-lg border border-input bg-background px-3 text-sm"
+          className="h-9 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
         >
           {ROLES.map((r) => (
             <option key={r.value} value={r.value}>
@@ -116,12 +116,16 @@ export function RegisterForm() {
       </div>
 
       {error && (
-        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
           {error}
         </p>
       )}
 
-      <Button type="submit" className="w-full" disabled={loading}>
+      <Button
+        type="submit"
+        className="mt-1 h-10 w-full bg-accent text-accent-foreground hover:bg-accent/90"
+        disabled={loading}
+      >
         {loading ? "Wird erstellt…" : "Konto erstellen"}
       </Button>
     </form>

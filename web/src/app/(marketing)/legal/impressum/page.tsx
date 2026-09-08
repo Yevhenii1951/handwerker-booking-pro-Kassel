@@ -14,23 +14,23 @@ export default async function ImpressumPage({ searchParams }: Props) {
 
   return (
     <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-12">
-      <div className="border border-[#daddb8] bg-[#ecebe4] px-6 py-10 sm:px-12 sm:py-14">
+      <div className="animate-in rounded-2xl border border-border bg-card px-6 py-10 fade-in duration-500 ease-out motion-reduce:animate-none sm:px-12 sm:py-14">
         <div className="flex flex-wrap items-baseline justify-between gap-3">
           <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
             {en ? "Imprint" : "Impressum"}
           </h1>
           <Link
             href={en ? "/legal/impressum" : "/legal/impressum?lang=en"}
-            className="rounded-md border border-[#daddb8] bg-[#fafaff] px-3 py-1 text-xs font-semibold text-foreground hover:bg-white"
+            className="rounded-lg border border-border bg-background px-3 py-1 text-xs font-semibold text-foreground transition-colors hover:bg-muted"
           >
             {en ? "Deutsch" : "English"}
           </Link>
         </div>
-        <p className="mt-2 text-xs tracking-wide text-[#b6b8b1]">
+        <p className="mt-2 text-xs tracking-wide text-muted-foreground">
           {en ? "Information in accordance with § 5 TMG" : "Angaben gemäß § 5 TMG"}
         </p>
 
-        <section className="mt-8 space-y-5 border-t border-[#daddb8] pt-6 text-sm leading-7 text-[#4a4c47]">
+        <section className="mt-8 space-y-5 border-t border-border pt-6 text-sm leading-7 text-muted-foreground">
           <div>
             <p className="font-bold text-foreground">
               {en ? "Operator" : "Betreiber"}

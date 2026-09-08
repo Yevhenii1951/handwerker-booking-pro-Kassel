@@ -45,16 +45,16 @@ export function MasterRow({
   const actions = ACTIONS[master.status] ?? []
 
   return (
-    <li className="flex flex-col gap-3 border-b border-zinc-200 py-4 last:border-0 dark:border-zinc-800 sm:flex-row sm:items-center sm:justify-between">
+    <li className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <p className="font-medium text-zinc-900 dark:text-zinc-100">
+        <p className="font-medium text-foreground">
           {master.fullName || "Unbenannter Betrieb"}
         </p>
-        <p className="mt-0.5 text-sm text-zinc-500">
+        <p className="mt-0.5 text-sm text-muted-foreground">
           {master.trade ?? "—"}
           {master.city ? ` · ${master.plz ? `${master.plz} ` : ""}${master.city}` : ""}
         </p>
-        <p className="mt-0.5 text-sm text-zinc-500">
+        <p className="mt-0.5 text-sm text-muted-foreground">
           Registriert am{" "}
           {new Intl.DateTimeFormat("de-DE", {
             dateStyle: "medium",
@@ -63,11 +63,11 @@ export function MasterRow({
           {inRegion === null ? (
             ""
           ) : inRegion ? (
-            <span className="ml-2 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
+            <span className="ml-2 rounded-full bg-teal-100 px-2 py-0.5 text-xs font-medium text-teal-900 dark:bg-teal-400/15 dark:text-teal-300">
               in Region
             </span>
           ) : (
-            <span className="ml-2 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700 dark:bg-red-950 dark:text-red-200">
+            <span className="ml-2 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-900 dark:bg-red-400/15 dark:text-red-300">
               außerhalb der Region
             </span>
           )}
@@ -78,10 +78,10 @@ export function MasterRow({
           <button
             key={a.status}
             onClick={() => act(a.status)}
-            className={`rounded-lg px-3 py-2 text-sm font-medium ${
+            className={`inline-flex h-9 items-center rounded-lg px-4 text-sm font-semibold transition-colors ${
               a.primary
-                ? "bg-primary text-primary-foreground hover:bg-primary/80"
-                : "border bg-background hover:bg-muted"
+                ? "bg-accent text-accent-foreground hover:bg-accent/90"
+                : "border border-border bg-card text-foreground hover:bg-muted"
             }`}
           >
             {a.label}

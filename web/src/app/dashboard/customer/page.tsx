@@ -2,6 +2,7 @@ import { requireRole } from "@/lib/auth"
 import { createClient } from "@/lib/supabase/server"
 import Link from "next/link"
 import { CancelBookingButton } from "./cancel-booking-button"
+import { StatusBadge } from "@/app/dashboard/status-badge"
 
 function formatBookedAt(value: string): string {
   return new Intl.DateTimeFormat("de-DE", {
@@ -12,21 +13,6 @@ function formatBookedAt(value: string): string {
     hour: "2-digit",
     minute: "2-digit",
   }).format(new Date(value))
-}
-
-const STATUS_LABELS: Record<string, string> = {
-  pending: "Offen",
-  confirmed: "Bestätigt",
-  declined: "Abgelehnt",
-  cancelled: "Storniert",
-}
-
-const STATUS_BADGE: Record<string, string> = {
-  pending: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200",
-  confirmed:
-    "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200",
-  declined: "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-200",
-  cancelled: "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300",
 }
 
 export default async function CustomerDashboard() {
@@ -66,46 +52,48 @@ export default async function CustomerDashboard() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold">Meine Buchungen</h1>
-      <p className="mt-1 text-sm text-zinc-500">
+      <h1 className="text-2xl font-semibold tracking-tight">Meine Buchungen</h1>
+      <p className="mt-1 text-sm text-muted-foreground">
         Hier sehen Sie den Status Ihrer Terminanfragen.
       </p>
 
       {list.length === 0 ? (
-        <div className="mt-6 rounded-lg border border-dashed border-zinc-300 p-8 text-center text-sm text-zinc-500 dark:border-zinc-700">
-          Sie haben noch keine Buchungen.{" "}
-          <Link href="/handwerker" className="font-medium text-primary hover:underline">
+        <div className="mt-6 rounded-2xl border border-dashed border-border bg-card p-10 text-center">
+          <p className="text-sm text-muted-foreground">
+            Sie haben noch keine Buchungen.
+          </p>
+          <Link
+            href="/handwerker"
+            className="mt-4 inline-flex h-10 items-center rounded-lg bg-accent px-5 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent/90"
+          >
             Jetzt einen Handwerker finden
           </Link>
         </div>
       ) : (
-        <ul className="mt-6 rounded-xl border border-zinc-200 bg-white px-5 dark:border-zinc-800 dark:bg-zinc-900">
+        <ul className="mt-6 divide-y divide-border rounded-2xl border border-border bg-card px-5">
           {list.map((b) => {
             const canCancel = b.status === "pending" || b.status === "confirmed"
             return (
               <li
                 key={b.id}
-                className="flex flex-col gap-3 border-b border-zinc-200 py-4 last:border-0 dark:border-zinc-800 sm:flex-row sm:items-center sm:justify-between"
+                className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div>
-                  <p className="font-medium text-zinc-900 dark:text-zinc-100">
+                  <p className="font-medium text-foreground">
                     {formatBookedAt(b.start_at)}
                   </p>
-                  <p className="text-sm text-zinc-500">
+                  <p className="text-sm text-muted-foreground">
                     {serviceNames[b.service_id] ?? "Leistung"} ·{" "}
                     {masterNames[b.master_id] ?? "Handwerksbetrieb"}
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span
-                    className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      STATUS_BADGE[b.status] ?? ""
-                    }`}
-                  >
-                    {STATUS_LABELS[b.status] ?? b.status}
-                  </span>
+                  <StatusBadge status={b.status} />
                   {canCancel && (
-                    <CancelBookingButton bookingId={b.id} serviceName={serviceNames[b.service_id] ?? "Leistung"} />
+                    <CancelBookingButton
+                      bookingId={b.id}
+                      serviceName={serviceNames[b.service_id] ?? "Leistung"}
+                    />
                   )}
                 </div>
               </li>

@@ -337,7 +337,10 @@ language plpgsql
 security definer set search_path = public
 as $$
 begin
-  insert into public.profiles (id, role, full_name, master_status)
+  insert into public.profiles (
+    id, role, full_name, master_status,
+    trade, plz, city, latitude, longitude
+  )
   values (
     new.id,
     coalesce((new.raw_user_meta_data->>'role'), 'customer')::public.app_role,
@@ -345,6 +348,19 @@ begin
     case
       when (new.raw_user_meta_data->>'role') = 'master' then 'pending'::public.master_status
       else null::public.master_status
+    end,
+    (new.raw_user_meta_data->>'trade'),
+    (new.raw_user_meta_data->>'plz'),
+    (new.raw_user_meta_data->>'city'),
+    case
+      when (new.raw_user_meta_data->>'latitude') is not null
+      then (new.raw_user_meta_data->>'latitude')::double precision
+      else null
+    end,
+    case
+      when (new.raw_user_meta_data->>'longitude') is not null
+      then (new.raw_user_meta_data->>'longitude')::double precision
+      else null
     end
   );
   return new;

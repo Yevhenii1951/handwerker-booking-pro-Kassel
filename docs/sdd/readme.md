@@ -1,154 +1,188 @@
-📄 docs/sdd/spec.md — спецификация
+# SDD — working notes
 
-- 3 роли (кустomer, master, admin)
-- Мастер неактивен до одобрения админом
-- Гео: Kassel + Göttingen, ≤50 км (гаверсинус)
-- Мастер задаёт фиксированные рабочие часы → авто-генерация слотов
-- Бронирование = запрос, мастер подтверждает
-- Без оплат (MVP), DE + EN, email-уведомления
-- 12 функциональных требований + acceptance criteria
-  📄 docs/sdd/schema.sql — схема БД для Supabase
-  Таблицы: profiles, portfolio_images, services, working_hours, blocked_times, bookings, region_centers
-  Ключевые решения:
-- Без двойного бронирования: уникальный partial index uq_confirmed_slot (master_id, start_at) WHERE status='confirmed' — только подтверждённые брони блокируют слот
-- RLS на все таблицы: публично видны только активные мастера; свой профиль/заказы — владелец; мастер меняет свои услуги; админ — всё
-- region_centers с координатами Касселя и Гёттингена (радиус 50 км)
+📄 docs/sdd/spec.md — specification
 
-✅ Базовая инфраструктура проекта
-Файл Назначение
-src/lib/supabase/client.ts Браузерный Supabase-клиент
-src/lib/supabase/server.ts Серверный клиент (для Server Components)
-src/lib/supabase/middleware.ts Обновление сессии в middleware
-src/middleware.ts Корневой middleware (глобальная сессия)
-src/lib/geo.ts Гаверсинус-расчёт + проверка зоны (Kassel/Göttingen, ≤50 км)
-src/lib/slots.ts Генерация слотов + проверка пересечений
-src/types/database.ts Все типы БД (Profile, Service, Booking, WorkingHours...)
-src/lib/utils.ts cn() через clsx + tailwind-merge
-✅ Структура app/ (route groups)
+- 3 roles (customer, master, admin)
+- Master is inactive until approved by an admin
+- Geo: Kassel + Göttingen, ≤50 km (haversine)
+- Master defines fixed working hours → automatic slot generation
+- Booking = request, master confirms
+- No payments (MVP), DE + EN, email notifications
+- 12 functional requirements + acceptance criteria
+- 📄 docs/sdd/schema.sql — Supabase DB schema
+  Tables: profiles, portfolio_images, services, working_hours, blocked_times, bookings, region_centers
+  Key decisions:
+  - No double-booking: partial unique index uq_confirmed_slot (master_id, start_at) WHERE status='confirmed'
+  - RLS on all tables: only active masters are public; own profile/orders — owner; master edits own services; admin — everything
+  - region_centers with Kassel and Göttingen coordinates (50 km radius)
+
+✅ Base project infrastructure
+
+| File | Purpose |
+| --- | --- |
+| src/lib/supabase/client.ts | Browser Supabase client |
+| src/lib/supabase/server.ts | Server client (for Server Components) |
+| src/lib/supabase/middleware.ts | Session refresh in middleware |
+| src/middleware.ts | Root middleware (global session) |
+| src/lib/geo.ts | Haversine calc + zone check (Kassel/Göttingen, ≤50 km) |
+| src/lib/slots.ts | Slot generation + overlap checks |
+| src/types/database.ts | All DB types (Profile, Service, Booking, WorkingHours…) |
+| src/lib/utils.ts | cn() via clsx + tailwind-merge |
+
+✅ app/ structure (route groups)
+
+```
 src/app/
-├── (marketing)/ # Публичный сайт
-│ └── page.tsx # Лендинг
-├── (auth)/ # login, register
-├── (dashboard)/ # master/, customer/
-├── legal/ # impressum, datenschutz
-├── api/auth/callback/ # Supabase OAuth callback
-├── layout.tsx # DE по умолчанию, toaster
-✅ Проверки
+├── (marketing)/ # Public site
+│   └── page.tsx # Landing
+├── (auth)/      # login, register
+├── dashboard/   # master/, customer/ (layout + role router)
+├── legal/       # impressum, datenschutz
+├── api/auth/callback/ # Supabase auth callback
+├── layout.tsx   # DE by default, toaster
+```
 
-- tsc --noEmit — чистый ✅
-- npm run lint — чистый ✅
-- next build — успешен ✅
-  Build показал, что middleware автоматически работает как Proxy (Next 16.3 новая фича), предупреждение о кodemod не критично для dev.
-  📌 Твои 2 шага
+✅ Checks
 
-1. Запусти SQL: Supabase → SQL Editor → вставь содержимое docs/sdd/schema.sql → Run
-2. Скопируй после этого docs/sdd/spec.md не забыл — но код уже по ней строится.
+- tsc --noEmit — clean ✅
+- npm run lint — clean ✅
+- next build — successful ✅
+  Build shows middleware automatically runs as Proxy (new Next 16.3 feature); the codemod warning is not critical for dev.
+- 📌 Your 2 steps
 
-Отлично. Реализую T1 Auth. Сначала посмотрю, что нужно: файлы auth-страниц, middleware-защита, типизированные роли.
-Проверю текущее состояние callback пустая и что на dashboard:
-→Read 1_FullStack/1_DEVELOPMENT_SDD/06_PROJECTS/003_handwerker-booking-pro-Kassel/web/src/app/(marketing)/page.tsx
-→Read 1_FullStack/1_DEVELOPMENT_SDD/06_PROJECTS/003_handwerker-booking-pro-Kassel/web/src/components/ui/form.tsx
-Форма form.tsx не установлена. Нужна для форм. Но сначала сделаю auth без сложных форм — использую простые client-компоненты с useState. Создам:
+1. Run SQL: Supabase → SQL Editor → paste docs/sdd/schema.sql → Run
+2. Then copy docs/sdd/spec.md — don't forget, but the code is already built around it.
 
-1. Auth helper-функции
-2. Страницы login/register
-3. Dashboard защищённый layout
-4. DB trigger для авто-создания профиля при регистрации
-   Начну с helpers:
+---
 
-Теперь регистрация. Создам страницу с простой формой (без React Hook Form — хватит useState + zod валидация):
+Great. Implement T1 Auth. First review what's needed: auth page files, middleware protection, typed roles.
 
-Теперь login страница + форма:
+Check current state: callback is empty, what's on dashboard:
 
-Теперь нужен DB trigger для авто-создания профиля при регистрации + redirect с /dashboard на роль-специфичный. Также добавлю в schema SQL trigger. Сначала создам trigger SQL и вставлю позже пользователю. Но чтобы работало сразу — создам trigger сейчас через код + страницу /dashboard редиректор:
+→Read web/src/app/(marketing)/page.tsx
+→Read web/src/components/ui/form.tsx
 
-Теперь dashboard лейауты. Создам простой защищённый layout с выходом:
+form.tsx is not installed. Needed for forms. But first I'll make auth without complex forms — simple client components with useState. Create:
 
-Теперь placeholder-страницы для master и customer дашбордов:
+1. Auth helper functions
+2. login/register pages
+3. Dashboard protected layout
+4. DB trigger for auto-creating profile on signup
 
-Теперь создам SQL trigger для авто-создания профиля при регистрации. Это критично — без него профиль не создаётся. Добавлю в schema.sql и дам тебе выполнить отдельно:
-→Read 1_FullStack/1_DEVELOPMENT_SDD/06_PROJECTS/003_handwerker-booking-pro-Kassel/docs/sdd/schema.sql [offset=1, limit=40]
+Start with helpers:
 
-Добавлю trigger в конец schema.sql:
+Now registration. Create a page with a simple form (no React Hook Form — useState + zod validation is enough):
 
-Теперь отдельный файл с триггером — чтобы ты применил только его (основная схема уже отработала):
+Now the login page + form:
 
-# Wrote 1_FullStack/1_DEVELOPMENT_SDD/06_PROJECTS/003_handwerker-booking-pro-Kassel/docs/sdd/trigger_profile.sql
+Now a DB trigger is needed to auto-create the profile on signup + a redirect from /dashboard to the role-specific page. I'll also add the trigger to the schema SQL. Create the trigger SQL first and give it to the user later. But so it works right away — create the trigger now via code + a /dashboard redirect page:
 
-Теперь добавлю страницу перехода с callback (для email confirmation):
+Now dashboard layouts. Create a simple protected layout with logout:
 
-# Wrote 1_FullStack/1_DEVELOPMENT_SDD/06_PROJECTS/003_handwerker-booking-pro-Kassel/web/src/app/api/auth/callback/route.ts
+Now placeholder pages for master and customer dashboards:
 
-Теперь проверю типы и билд. Также dashboard requires email confirmation — но лучше включить "Email confirmations" в Supabase. Проверю сборку:
+Now create the SQL trigger for auto-creating the profile on signup. Critical — without it the profile is not created. Add it to schema.sql and hand it to you separately:
 
-✅ T1 Auth — готово
-Создано:
-Файл Что делает
-src/lib/auth.ts getCurrentUser, getCurrentProfile, requireUser, requireProfile, requireRole
-(auth)/register/ Страница + форма регистрации с выбором роли (Kunde/Handwerker)
-(auth)/login/ Страница + форма входа
-dashboard/ Лейаут с защитой + кнопка "Abmelden" + роутер по роли
-dashboard/master/ Заглушка (показывает "pending" если мастер на модерации)
-dashboard/customer/ Заглушка
-api/auth/callback/ Обработка подтверждения email
-docs/sdd/trigger_profile.sql SQL-триггер — создаёт профиль при регистрации
-Исправлено:
+Add the trigger to the end of schema.sql:
 
-- Route-группа (dashboard) → папка dashboard/ (убрал конфликт путей /)
-- middleware.ts → proxy.ts (новая конвенция Next 16.3)
-- utils.ts → чистый cn() (clsx + tailwind-merge), не трогает shadcn
-  Проверки:
-- ✅ tsc --noEmit — чисто
-- ✅ npm run lint — чисто
-- ✅ next build — успешен, маршруты: /, /login, /register, /dashboard\*, /api/auth/callback
-  📌 Твой шаг — запусти trigger
-  Открой docs/sdd/trigger_profile.sql → вставь в Supabase SQL Editor → Run.
-  Это критично: без него при регистрации не создастся строка в profiles, и тебя будет кидать обратно на /login.
-  После этого — тест в браузере
+Now a separate trigger file — so you can apply only it (the main schema already ran):
 
-1. npm run dev → открой localhost:3000/register
-2. Зарегистрируйся как Kunde → должен попасть в /dashboard/customer
-3. Зарегистрируйся как Handwerker → попадёт в /dashboard/master с надписью "Antrag in Prüfung"
-   Скажи когда запустил trigger — и как прошёл тест. Затем перейдём к T2 (гео-проверка мастеров).
+# Wrote docs/sdd/trigger_profile.sql
 
-Готово — коммит и пуш выполнены.
+Now add a redirect page from callback (for email confirmation):
 
-Итог
+# Wrote web/src/app/api/auth/callback/route.ts
 
-- Коммит: feat: SDD spec, Supabase schema, and auth foundation (50 файлов)
-- Ветка: main, отслеживает origin/main
-- На GitHub: https://github.com/Yevhenii1951/handwerker-booking-pro-Kassel
-  Безопасность: .env.local (с твоими ключами Supabase) исключён и не попал в репозиторий. ✅
-  Следующий шаг — запусти trigger_profile.sql в Supabase SQL Editor (я его уже создал в docs/sdd/trigger_profile.sql), и протестируй регистрацию. Скажи как получится.
+Now check types and build. The dashboard also requires email confirmation — better to enable "Email confirmations" in Supabase. Check build:
 
-✅ Всё работает. Тестовые юзеры удалены.
-Итог
-Сценарий Результат
-Мастер, роль master профиль создан, master_status: pending ✅
-Клиент, роль customer профиль создан, master_status: null ✅
-Баг был в типе: CASE ... THEN 'pending' возвращал text, а вставлялся в enum-колонку master_status. Явный каст 'pending'::public.master_status это исправил.
-Что дальше
-Теперь регистрация в твоём приложении (npm run dev → /register) должна работать как надо.
-Фикс записан в docs/sdd/trigger_profile.sql и docs/sdd/schema.sql. Сделать коммит и пуш? И переходим к T2 — гео-проверка мастеров (реализация подробностей профиля мастера с координатами/регионом)?
+✅ T1 Auth — done
+
+Created:
+
+| File | What it does |
+| --- | --- |
+| src/lib/auth.ts | getCurrentUser, getCurrentProfile, requireUser, requireProfile, requireRole |
+| (auth)/register/ | Page + registration form with role select (Kunde/Handwerker) |
+| (auth)/login/ | Page + login form |
+| dashboard/ | Protected layout + Abmelden button + role router |
+| dashboard/master/ | Stub (shows "pending" while master is on moderation) |
+| dashboard/customer/ | Stub |
+| api/auth/callback/ | Email confirmation handling |
+| docs/sdd/trigger_profile.sql | SQL trigger — creates profile on signup |
+
+Fixed:
+
+- Route group (dashboard) → dashboard/ folder (removed the / path conflict)
+- middleware.ts → proxy.ts (new Next 16.3 convention)
+- utils.ts → clean cn() (clsx + tailwind-merge), doesn't touch shadcn
+
+Checks:
+
+- ✅ tsc --noEmit — clean
+- ✅ npm run lint — clean
+- ✅ next build — successful, routes: /, /login, /register, /dashboard\*, /api/auth/callback
+
+📌 Your step — run the trigger
+
+Open docs/sdd/trigger_profile.sql → paste in Supabase SQL Editor → Run.
+Critical: without it, no profiles row is created on signup and you bounce back to /login.
+Then — browser test
+
+1. npm run dev → open localhost:3000/register
+2. Register as Kunde → you should land in /dashboard/customer
+3. Register as Handwerker → lands in /dashboard/master with "Antrag in Prüfung"
+
+Tell me when you've run the trigger — and how the test went. Then we move on to T2 (geo check for masters).
+
+Done — commit and push completed.
+
+Summary
+
+- Commit: feat: SDD spec, Supabase schema, and auth foundation (50 files)
+- Branch: main, tracks origin/main
+- On GitHub: https://github.com/Yevhenii1951/handwerker-booking-pro-Kassel
+- Security: .env.local (with your Supabase keys) is git-ignored and never entered the repo. ✅
+- Next step — run trigger_profile.sql in Supabase SQL Editor (already created at docs/sdd/trigger_profile.sql), then test registration. Tell me how it goes.
+
+✅ Everything works. Test users deleted.
+
+| Scenario | Result |
+| --- | --- |
+| Master, role master | profile created, master_status: pending ✅ |
+| Customer, role customer | profile created, master_status: null ✅ |
+
+The bug was in the type: CASE ... THEN 'pending' returned text, but was inserted into the enum column master_status. The explicit cast 'pending'::public.master_status fixed it.
+
+What's next
+
+Now registration in your app (npm run dev → /register) should work as expected.
+Fix is recorded in docs/sdd/trigger_profile.sql and docs/sdd/schema.sql. Commit and push? And we move to T2 — geo check for masters (master profile details with coordinates/region)?
+
 =================================================================================================
 
-✅ T2 готово и запушено (31e8729).
-Что сделано
-Файл Назначение
-src/lib/geocode.ts Геокодинг PLZ → координаты через Nominatim (OpenStreetMap, без ключа)
-src/lib/geo.ts + regionFromCenters() — определение ближайшей зоны (Kassel/Göttingen)
-src/lib/trades.ts Список Gewerke для выбора
-dashboard/master/onboarding/ Страница + форма + server action с проверкой зоны 50 км
-dashboard/master/page.tsx Редирект на онбординг, пока профиль не заполнен
-vitest + тесты 13 тестов: haversine, зона, геокодер (фолбэки, ошибки)
-Как работает
+✅ T2 done and pushed (31e8729).
 
-1. Мастер регистрируется → /dashboard/master → редирект на онбординг
-2. Заполняет Gewerk, PLZ, Ort, телефон → Submit
-3. Сервер геокодит PLZ → проверяет isWithinAnyRegion (50 км от Kassel или Göttingen)
-4. В зоне → профиль сохранён + координаты, статус остаётся pending (ждёт админа)
-5. Вне зоны → ошибка «liegt außerhalb unseres Servicegebiets», данные не сохраняются
-   Проверки: tsc ✅ · lint ✅ · test 13/13 ✅ · build ✅
-   Твой шаг (когда лимит сбросится)
-   Регистрация мастера → заполнить онбординг (например PLZ 34117 Kassel). Если ввести PLZ далеко (напр. 10115 Berlin) — увидишь отказ.
-   Проверь — и переходим к T3: профиль мастера (CRUD, услуги, рабочие часы → генерация слотов).
+What was done
+
+| File | Purpose |
+| --- | --- |
+| src/lib/geocode.ts | Geocoding PLZ → coordinates via Nominatim (OpenStreetMap, no key) |
+| src/lib/geo.ts + regionFromCenters() | Nearest zone detection (Kassel/Göttingen) |
+| src/lib/trades.ts | List of Gewerke for selection |
+| dashboard/master/onboarding/ | Page + form + server action with 50 km zone check |
+| dashboard/master/page.tsx | Redirect to onboarding until profile is complete |
+| vitest + tests | 13 tests: haversine, zone, geocoder (fallbacks, errors) |
+
+How it works
+
+1. Master registers → /dashboard/master → redirect to onboarding
+2. Fills in Gewerk, PLZ, Ort, phone → Submit
+3. Server geocodes PLZ → checks isWithinAnyRegion (50 km from Kassel or Göttingen)
+4. In zone → profile saved + coordinates, status stays pending (waits for admin)
+5. Out of zone → error «liegt außerhalb unseres Servicegebiets», data is not saved
+
+Checks: tsc ✅ · lint ✅ · test 13/13 ✅ · build ✅
+
+Your step (when the limit resets)
+Register a master → fill in onboarding (e.g. PLZ 34117 Kassel). Enter a far-away PLZ (e.g. 10115 Berlin) — you'll see the rejection.
+Check it — and we move to T3: master profile (CRUD, services, working hours → slot generation).

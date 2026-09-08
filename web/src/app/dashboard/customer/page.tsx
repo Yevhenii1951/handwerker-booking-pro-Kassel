@@ -15,6 +15,13 @@ function formatBookedAt(value: string): string {
   }).format(new Date(value))
 }
 
+const CUSTOMER_STATUS_LABELS: Record<string, string> = {
+  pending: "Wartet auf Bestätigung des Handwerkers",
+  confirmed: "Bestätigt vom Handwerker",
+  declined: "Abgelehnt vom Handwerker",
+  cancelled: "Storniert",
+}
+
 export default async function CustomerDashboard() {
   const { user } = await requireRole(["customer", "master"])
 
@@ -88,7 +95,10 @@ export default async function CustomerDashboard() {
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <StatusBadge status={b.status} />
+                  <StatusBadge
+                    status={b.status}
+                    label={CUSTOMER_STATUS_LABELS[b.status]}
+                  />
                   {canCancel && (
                     <CancelBookingButton
                       bookingId={b.id}

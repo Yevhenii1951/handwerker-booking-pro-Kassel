@@ -14,14 +14,20 @@ const STATUS_LABELS: Record<string, string> = {
   cancelled: "Storniert",
 }
 
-export function StatusBadge({ status }: { status: string }) {
+export function StatusBadge({
+  status,
+  label,
+}: {
+  status: string
+  label?: string
+}) {
   return (
     <span
       className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
         STATUS_STYLES[status] ?? STATUS_STYLES.cancelled
       }`}
     >
-      {STATUS_LABELS[status] ?? status}
+      {label ?? STATUS_LABELS[status] ?? status}
     </span>
   )
 }

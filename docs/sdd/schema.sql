@@ -318,11 +318,13 @@ create policy "region_centers_select" on public.region_centers
 -- Guests need to see which slots are taken, but must not see
 -- booking details (who booked). The view exposes only the busy
 -- interval and is readable by anon/authenticated.
+-- Includes both pending and confirmed bookings so slots are
+-- "frozen" once a request is sent (prevents double-booking).
 -- ============================================================
 create or replace view public.public_confirmed_slots as
   select master_id, start_at, end_at
   from public.bookings
-  where status = 'confirmed';
+  where status in ('pending', 'confirmed');
 
 grant select on public.public_confirmed_slots to anon, authenticated;
 

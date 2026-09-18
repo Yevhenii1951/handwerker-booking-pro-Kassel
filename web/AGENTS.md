@@ -2,9 +2,11 @@
 
 - A task is not closed until `npm run check` has passed AND its output is
   shown in the answer. Saying "it works" without test results is forbidden.
-- Never edit tests and working code in the same pass. First fix/implement the
-  code; if a test is legitimately outdated because logic changed, update it in
-  a separate, second step.
+- For a regression: reproduce the failure and fix the implementation without
+  weakening the existing test.
+- If the requirement genuinely changed: update the spec/acceptance criteria
+  first, then the affected test, then the implementation — as visible steps.
+  Never weaken or rewrite an existing test merely to make it go green.
 - Never weaken, skip, or delete checks to make them green. A red check is a
   signal; fix the root cause.
 - Tests must never run against the production database (see `tests/context.md`).

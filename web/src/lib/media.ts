@@ -21,59 +21,35 @@ const G = (name: string) => `/images/gallery/${name}.webp`
 
 export const TRADE_GALLERY: Record<string, string[]> = {
   Elektriker: [
-    G("electrician-in-hard-hat-standing-by-open-electrical-panel"),
-    G("electrician-repairing-circuit-breaker-panel-with-screwdriver"),
-    G("electrician-tools-and-multimeter-on-wooden-workbench"),
-    G("professional-electrician-tools-and-wiring-equipment-flat-lay"),
+    G("elektriker-1"),
+    G("elektriker-2"),
+    G("elektriker-3"),
+    G("elektriker-4"),
+    G("elektriker-5"),
   ],
   "Klempner / Installateur (Sanitär, Heizung)": [
-    G("close-up-of-chrome-faucet-with-plumbing-tools-on-white-sink"),
-    G("organized-copper-and-plastic-plumbing-pipes-on-concrete-wall"),
-    G("plumbing-tools-and-wrenches-on-tiled-floor"),
-    G("close-up-of-danfoss-radiator-thermostat-valve-setting"),
+    G("sanitaer-1"),
+    G("sanitaer-2"),
+    G("heizung-1"),
+    G("heizung-2"),
+    G("heizung-3"),
   ],
-  "Maler / Lackierer": [
-    G("painter-applying-gray-paint-to-interior-wall-with-roller"),
-    G("hand-painting-white-door-with-small-roller"),
-    G("painting-tools-and-supplies-on-plastic-drop-cloth"),
-    G("white-paint-can-and-brushes-on-newspaper-background"),
-  ],
-  "Tischler / Schreiner": [
-    G("carpenter-measuring-wood-with-calipers-in-workshop"),
-    G("carpenter-planing-wood-with-hand-plane-in-workshop"),
-    G("vintage-woodworking-tools-on-wooden-chest-against-brick-wall"),
-    G("woodworking-tools-on-wooden-workbench-with-sawdust"),
-  ],
-  Dachdecker: [
-    G("roofer-climbing-ladder-on-red-tiled-roof"),
-    G("two-construction-workers-in-safety-gear-on-a-building-roof"),
-  ],
-  Fliesenleger: [
-    G("close-up-of-worker-using-angle-grinder-to-cut-floor-tile"),
-    G("construction-worker-installing-ceramic-floor-tiles-in-renovation"),
-  ],
-  Maurer: [
-    G("construction-worker-laying-bricks-against-blue-sky"),
-    G("construction-worker-laying-bricks-outdoors-in-sunny-field"),
-  ],
-  Zimmermann: [
-    G("construction-worker-laying-bricks-outdoors-in-sunny-field"),
-    G("carpenter-planing-wood-with-hand-plane-in-workshop"),
-    G("carpenter-measuring-wood-with-calipers-in-workshop"),
-  ],
-  "Garten- und Landschaftsbau": [
-    G("gray-granite-stepping-stones-pathway-set-in-natural-river-pebbles"),
-  ],
-  "Fenster und Türen": [
-    G("two-workers-carrying-large-glass-window-panels-from-truck"),
-  ],
-  "Bodenbelag / Parkett": [
-    G("carpenter-measuring-laminate-flooring-with-pencil-and-hammer_Parket"),
-  ],
+  "Maler / Lackierer": [G("maler-1"), G("maler-2"), G("maler-3")],
+  "Tischler / Schreiner": [G("schreiner-1"), G("schreiner-2")],
+  Dachdecker: [G("dachdecker-1"), G("dachdecker-2"), G("dachdecker-3")],
+  Fliesenleger: [G("fliesen-1"), G("fliesen-2"), G("fliesen-3")],
+  Maurer: [G("maurer-1"), G("maurer-2"), G("maurer-3")],
+  Zimmermann: [G("schreiner-1"), G("schreiner-2")],
+  "Garten- und Landschaftsbau": [G("garten-1"), G("garten-2")],
+  "Fenster und Türen": [G("fenster-tuer-1"), G("fenster-tuer-2")],
+  "Bodenbelag / Parkett": [G("boden-1"), G("boden-2"), G("boden-3")],
   "Heizung und Klima": [
-    G("row-of-white-fujitsu-air-conditioning-units-on-concrete-wall"),
-    G("close-up-of-danfoss-radiator-thermostat-valve-setting"),
-    G("close-up-of-white-radiator-thermostat-control-knob"),
+    G("klima-1"),
+    G("klima-2"),
+    G("klima-3"),
+    G("heizung-1"),
+    G("heizung-2"),
+    G("heizung-3"),
   ],
 }
 

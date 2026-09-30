@@ -10,6 +10,8 @@ export const dict = {
       register: "Registrieren",
       myArea: "Mein Bereich",
       footerTagline: "Handwerker vermitteln in Kassel & Göttingen, 50 km Umkreis.",
+      footerCredit:
+        "Webentwicklung: Yevhenii Riabokon · Demo- und Übungsprojekt · Bildmaterial dient der Veranschaulichung.",
       impressum: "Impressum",
       datenschutz: "Datenschutz",
     },
@@ -62,6 +64,8 @@ export const dict = {
       register: "Registrieren",
       myArea: "My account",
       footerTagline: "Local tradespeople in Kassel & Göttingen, 50 km radius.",
+      footerCredit:
+        "Web development: Yevhenii Riabokon · Demo and training project · Images are for illustrative purposes.",
       impressum: "Imprint",
       datenschutz: "Privacy",
     },

@@ -26,6 +26,9 @@ export function MarketingFooter() {
           </Link>
         </nav>
       </div>
+      <p className="mx-auto mt-6 max-w-6xl px-4 text-xs text-[#b6b8b1]/70">
+        {t.layout.footerCredit}
+      </p>
     </footer>
   )
 }

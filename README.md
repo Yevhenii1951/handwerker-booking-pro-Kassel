@@ -1,8 +1,31 @@
+<div align="center">
+
 # handwerkerpro
+
+**Lokale Handwerker finden, freie Termine wählen und Buchungen verbindlich anfragen.**
+
+![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript)
+![Supabase](https://img.shields.io/badge/Supabase-Postgres%20%7C%20Auth%20%7C%20Storage-3ECF8E?logo=supabase)
+![Vercel](https://img.shields.io/badge/deploy-Vercel-black?logo=vercel)
+
+</div>
+
+---
+
+## Überblick
 
 Platform that connects customers with local handwerker (craftsmen/tradespeople) in the Kassel / Göttingen region (Germany). Customers find a master, pick a free time slot from a calendar and send a booking request. Masters confirm or decline requests from their dashboard. Admins approve new masters.
 
 Built as a training project for the DCI full-stack curriculum — a complete, production-shaped booking platform on Vercel + Supabase.
+
+## Der Ablauf
+
+```
+Kunde registriert sich -> wählt Handwerker -> wählt freien Termin
+       -> sendet Anfrage -> Handwerker bestätigt oder lehnt ab
+       -> beide sehen Status und Benachrichtigungen im Dashboard
+```
 
 ## Screenshots
 
